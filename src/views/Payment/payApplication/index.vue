@@ -6,7 +6,7 @@
       <p>
         <span>制单人：{{ user.agencyName }}</span> &nbsp;
         <span
-          >制单时间：{{ formatDate(new Date(), "yyyy-MM-dd hh:mm:ss") }}</span
+          >制单时间：{{ dateTime }}</span
         >
       </p>
     </div>
@@ -58,6 +58,12 @@
             v-model="infoForm.collection"
             placeholder="请选择收款账户"
             :disabled="!infoForm.approve"
+          />
+        </el-form-item>
+        <el-form-item label="金额：" prop="money">
+          <el-input
+            v-model="infoForm.money"
+            placeholder="请输入金额"
           />
         </el-form-item>
         <el-form-item label="摘要：" prop="remark">
@@ -117,10 +123,11 @@ export default defineComponent({
   setup() {
     const infoRef = ref();
     const data = reactive({
+      dateTime: formatDate(new Date(), "yyyy-MM-dd hh:mm:ss"),
       user: {
         agencyName: "溆浦财政局-国库股-出纳",
       },
-      infoForm: {
+      infoForm: <any>{
         cardId: "",
       },
       rules: {
@@ -129,6 +136,7 @@ export default defineComponent({
         collection: [{ required: true, message: "必填", trigger: "blur" }],
         remark: [{ required: true, message: "必填", trigger: "blur" }],
         purpose: [{ required: true, message: "必填", trigger: "blur" }],
+        money: [{ required: true, message: "必填", trigger: "blur" }],
       },
     });
     // 提交
@@ -152,7 +160,7 @@ export default defineComponent({
     // 打印
     const printViewRef = ref();
     const printfClick = () => {
-      printViewRef.value.open();
+      printViewRef.value.open(data.infoForm,data.user, data.dateTime);
     }
 
     return {
