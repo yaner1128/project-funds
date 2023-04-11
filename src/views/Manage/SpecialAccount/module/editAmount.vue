@@ -10,11 +10,11 @@
   >
     <div class="dialog_container">
       <el-form ref="addFormRef" :model="addForm" label-width="100px" :rules="rules">
-        <el-form-item label="余额：" prop="amount">
-          <el-input v-model="addForm.amount" placeholder="" />
+        <el-form-item label="余额：" prop="modifyAmount">
+          <el-input-number v-model="addForm.modifyAmount" :controls="false" placeholder="请输入修正余额" />
         </el-form-item>
-        <el-form-item label="修改原因：" prop="reason">
-          <el-input v-model="addForm.reason" placeholder="" type="textarea" />
+        <el-form-item label="修改原因：" prop="remark">
+          <el-input v-model="addForm.remark" placeholder="请输入修正原因" :autosize="{ minRows: 5 }" type="textarea" />
         </el-form-item>
       </el-form>
     </div>
@@ -31,19 +31,22 @@
 import { defineComponent, onMounted, reactive, ref, toRefs } from "vue";
 import { getProject } from "@/api/manage";
 import Pagination from "@/components/Pagination/index.vue";
+import { addAccountLog } from "@/api/dsAccounts";
+import { ElMessage } from "element-plus";
 
 export default defineComponent({
   name: "addView",
   components: {
     Pagination,
   },
-  setup() {
+  setup(props, { emit }) {
     const addFormRef = ref();
     const data = reactive({
       dialogFormVisible: false,
+      accountCode: null,
       addForm: {
-        amount: '',
-        reason: '',
+        modifyAmount: null,
+        remark: '',
       },
       tableData: [],
       pageObj: {
@@ -52,12 +55,13 @@ export default defineComponent({
       },
       total: 0,
       rules: {
-        amount: [{ required: true, message: "请输入修正金额", trigger: "blur" }],
-        reason: [{ required: true, message: "请输入修正原因", trigger: "blur" }],
+        modifyAmount: [{ required: true, message: "请输入修正金额", trigger: "blur" }],
+        remark: [{ required: true, message: "请输入修正原因", trigger: "blur" }],
       }
     });
     // 打开弹窗
-    const open = () => {
+    const open = (accountCode: any) => {
+      data.accountCode = accountCode;
       data.dialogFormVisible = true;
     };
     // 关闭
@@ -70,6 +74,18 @@ export default defineComponent({
       await addFormRef.value.validate((valid: any, fields: any) => {
         if (valid) {
           console.log('校验成功')
+          const params = Object.assign({
+            accountCode: data.accountCode
+          }, data.addForm)
+          addAccountLog(params).then((res: any) => {
+            if(res.code === 200) {
+              ElMessage.success(res.message);
+              resetForm();
+              emit('reload')
+            }else{
+              ElMessage.warning(res.message);
+            }
+          })
         }
       })
     };
@@ -88,5 +104,8 @@ export default defineComponent({
 <style lang="scss" scoped>
 .scrollbar {
   height: calc(100vh - 173px);
+}
+/deep/ .el-input-number input{
+  text-align: left;
 }
 </style>

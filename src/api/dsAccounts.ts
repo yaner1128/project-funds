@@ -48,10 +48,28 @@ export function specialFundsEleUnionTree() {
 }
 
 // 获取股室数据
-export function basMofDepTree() {
+export function basMofDepTree(params: any) {
   return request({
     url: '/ds-cz-datacenter-user/basMofDep/tree',
+    method: 'get',
+    params
+  })
+}
+
+// 获取专户
+export function getAccountsStatus() {
+  return request({
+    url: '/ds-cz-datacenter-special-funds/dsAccounts/getAccountsStatus',
     method: 'get'
+  })
+}
+
+// 修改余额
+export function addAccountLog(data: any) {
+  return request({
+    url: '/ds-cz-datacenter-special-funds/dsAccountLog/add',
+    method: 'post',
+    data
   })
 }
 
