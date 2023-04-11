@@ -47,7 +47,7 @@ function useTable(app: any) {
   // app.config.globalProperties.$XReadFile = VXETable.readFile
 }
 import './components/filterMode/index.tsx'// 表格组件优化自定义筛选
-import { CaretBottom, Search, RefreshRight, Download, Sort, CircleClose, Plus, Minus, View, Right, UserFilled, User, Unlock, EditPen, Delete, MoreFilled, Upload, Check, Lock } from '@element-plus/icons-vue'
+import { CaretBottom, Search, RefreshRight, Download, Sort, CircleClose, Plus, Minus, View, Right, UserFilled, User, Unlock, EditPen, Delete, MoreFilled, Upload, Check, Lock, QuestionFilled } from '@element-plus/icons-vue'
 
 import './styles/index.scss'
 
@@ -77,6 +77,7 @@ app.component('Delete', Delete)
 app.component('MoreFilled', MoreFilled)
 app.component('Upload', Upload)
 app.component('Check', Check)
+app.component('QuestionFilled', QuestionFilled)
 
 app.use(Print)
 app.use(ElementPlus)

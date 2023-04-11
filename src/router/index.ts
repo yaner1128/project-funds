@@ -4,9 +4,8 @@ import Config from '@/config'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css'// progress bar style
 import { getToken, setToken } from '@/utils/auth' // getToken from cookie
-// import { buildMenus } from '@/api/menu'
-// import { filterAsyncRouter } from '@/store/modules/permission'
-// import { RouteRecordRaw } from 'vue-router'
+import { buildMenus } from '@/api/menu'
+import { filterAsyncRouter } from '@/store/modules/permission'
 
 NProgress.configure({ showSpinner: false })
 
@@ -58,27 +57,27 @@ router.beforeEach((to: any, from: any, next: any) => {
       // 测试环境
       // window.location.href = 'http://192.168.1.7:3265/';
       // 正式环境
-      // window.location.href = window.location.origin;
+      // window.location.href = window.location.origin
       next(`/login`) // 否则全部重定向到登录页
-      // next();
+      // next()
       NProgress.done()
     }
   }
 })
 
 export const loadMenus = (next: (arg0: any) => void, to: any) => {
-  // buildMenus().then((res: any) => {
-  //   const asyncRouter = filterAsyncRouter(res.data)
-  //   asyncRouter.push({ path: '*', redirect: '/404', hidden: true })
-  //   store.dispatch('GenerateRoutes', asyncRouter).then(() => { // 存储路由
-  //     asyncRouter.forEach((item: any) => {
-  //       if (item.path.indexOf('/') !== -1) {
-  //         router.addRoute(item)
-  //       }
-  //     })
-  next({ ...to, replace: true })// hack方法 确保addRoutes已完成
-  //   })
-  // })
+  buildMenus().then((res: any) => {
+    const asyncRouter = filterAsyncRouter(res.data)
+    asyncRouter.push({ path: '*', redirect: '/404', hidden: true })
+    store.dispatch('GenerateRoutes', asyncRouter).then(() => { // 存储路由
+      asyncRouter.forEach((item: any) => {
+        if (item.path.indexOf('/') !== -1) {
+          router.addRoute(item)
+        }
+      })
+      next({ ...to, replace: true })// hack方法 确保addRoutes已完成
+    })
+  })
 }
 
 router.afterEach(() => {

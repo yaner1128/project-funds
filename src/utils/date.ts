@@ -26,10 +26,10 @@ export function formatDate(date: any, fmt: string) {
 }
 
 export function getFirstDay(date:any, fmt: any) {
-    date.setDate(1);
-    date.setMonth(0);
-    date = formatDate(date,fmt);
-    return date
+  date.setDate(1)
+  date.setMonth(0)
+  date = formatDate(date, fmt)
+  return date
 }
 
 function padLeftZero(str: string | any[]) {

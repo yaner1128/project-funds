@@ -57,34 +57,96 @@ export const constantRouterMap = [
         component: () => import('@/views/redirect/index.vue')
       }
     ]
-  },
-  {
-    path: '/system',
-    component: Layout,
-    redirect: '/system/role',
-    meta: {
-      title: '系统管理'
-    },
-    name: '系统管理',
-    children: [
-      {
-        path: 'role',
-        meta: {
-          title: '角色管理'
-        },
-        name: '角色管理',
-        component: () => import('@/views/system/role/index.vue')
-      },
-      {
-        path: 'menu',
-        meta: {
-          title: '菜单管理'
-        },
-        name: '菜单管理',
-        component: () => import('@/views/system/menu/index.vue')
-      }
-    ]
   }
+  // {
+  //   path: '/manage',
+  //   component: Layout,
+  //   redirect: '/system/role',
+  //   meta: {
+  //     title: '系统设置'
+  //   },
+  //   name: '系统设置',
+  //   children: [
+  //     {
+  //       path: 'agency',
+  //       meta: {
+  //         title: '单位管理'
+  //       },
+  //       name: '单位管理',
+  //       component: () => import('@/views/Manage/UnitManage/index.vue')
+  //     },
+  //     {
+  //       path: 'account',
+  //       meta: {
+  //         title: '专户管理'
+  //       },
+  //       name: '专户管理',
+  //       component: () => import('@/views/Manage/SpecialAccount/index.vue')
+  //     },
+  //     {
+  //       path: 'acSet',
+  //       meta: {
+  //         title: '账套管理'
+  //       },
+  //       name: '账套管理',
+  //       component: () => import('@/views/Manage/acSet/index.vue')
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/pay',
+  //   component: Layout,
+  //   redirect: '/pay/add',
+  //   meta: {
+  //     title: '专户付款申请'
+  //   },
+  //   name: '专户付款申请',
+  //   children: [
+  //     {
+  //       path: 'query',
+  //       meta: {
+  //         title: '专户付款申请'
+  //       },
+  //       name: '专户付款申请',
+  //       component: () => import('@/views/Payment/payApplication/index.vue')
+  //     },
+  //     {
+  //       path: 'add',
+  //       meta: {
+  //         title: '新增专户付款申请'
+  //       },
+  //       name: '新增专户付款申请',
+  //       component: () => import('@/views/Payment/payApplication/index.vue')
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/system',
+  //   component: Layout,
+  //   redirect: '/system/role',
+  //   meta: {
+  //     title: '系统管理'
+  //   },
+  //   name: '系统管理',
+  //   children: [
+  //     {
+  //       path: 'role',
+  //       meta: {
+  //         title: '角色管理'
+  //       },
+  //       name: '角色管理',
+  //       component: () => import('@/views/system/role/index.vue')
+  //     },
+  //     {
+  //       path: 'menu',
+  //       meta: {
+  //         title: '菜单管理'
+  //       },
+  //       name: '菜单管理',
+  //       component: () => import('@/views/system/menu/index.vue')
+  //     }
+  //   ]
+  // }
 ]
 
 export default createRouter({

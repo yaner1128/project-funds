@@ -64,5 +64,5 @@ const globalConfig = {
   /**
    * serviceId
    */
-   serviceId: 'ds-cz-datacenter-projectFunds'
+   serviceId: 'ds-cz-datacenter-special-funds'
 }

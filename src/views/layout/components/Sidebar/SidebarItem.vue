@@ -20,7 +20,6 @@
           <template #title>
             <item
               v-if="onlyOneChild.meta"
-              :icon="onlyOneChild.meta.icon || item.meta.icon"
               :title="onlyOneChild.meta.title"
             />
           </template>
