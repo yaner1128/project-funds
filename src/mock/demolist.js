@@ -1,22 +1,3 @@
-let demo = {
-  status: 200,
-  message: "success",
-  data: {
-    projectData: {
-      projectTotal: 15,
-      reviewed: 13,
-      toBeReviewed: 1,
-      failed: 1
-    },
-    amountData: {
-      amountTotal: 2600.73,
-      toBePaid: 1800.60,
-      toBePaid: 200.13,
-      surplus: 600.00
-    }
-  },
-}
-
 let demo2 = {
   status: 200,
   message: "success",
@@ -66,26 +47,26 @@ let demo4 = {
   },
 };
 
-let demo5 = {
+let demo = {
   status: 200,
   message: "success",
   data: {
     total: 100,
-    'rows|10': [{
+    'records|10': [{
       id: '@guid',
-      'projectName|1-5': 'xx',
-      'project|1-5': 'xxxx',
-      'total|500-100000.2': 1,
-      'unpaid|500-100000.2': 1,
-      'paid|1-100': 1,
-      'mofApp': /(^(\d|[1-9]\d)(\.\d{1,5})?$)|(^100$)/,
-      'amount': /(^(\d|[1-9]\d)(\.\d{1,5})?$)|(^100$)/
+      'agencyCode|1-5': 'x',
+      'agencyName|1-5': 'xxx',
+      'count': /\d{1,4}/,
+      'application': /\d{1,4}/,
+      'pendingApproval': /\d{1,4}/,
+      'reviewed': /\d{1,4}/,
+      'rejected': /\d{1,4}/,
+      'amount': /(^[1-9](\d{2,4}|[1-9]\d)(\.\d{1,5})?$)|(^100$)/,
+      'status|1': [0,1,-1]
     }]
   }
 }
 
 export default {
-  // "get|/project/data": demo,
-  // "get|/auth/info": demo3,
-  // "post|/project/list": demo5,
+  "get|/project/data": demo
 };
