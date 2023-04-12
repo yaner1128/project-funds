@@ -31,6 +31,7 @@
       <el-table-column prop="codeName" label="值集名称" />
       <el-table-column prop="code" label="值集代码" />
       <el-table-column prop="type" label="值集分类" />
+      <el-table-column prop="abbreviation" label="值集简称" />
       <el-table-column prop="createTime" label="创建时间" />
       <el-table-column prop="updateTime" label="更新时间" />
       <el-table-column label="操作" width="200px" align="center">
@@ -79,6 +80,9 @@
         <el-form-item label="值集类型:" prop="type">
           <el-input v-model="form.type" placeholder="请输入值集类型" :disabled="form.parentId!=0" />
         </el-form-item>
+        <el-form-item label="值集简称:" prop="abbreviation">
+          <el-input v-model="form.abbreviation" placeholder="请输入值集简称" :disabled="form.parentId!=0" />
+        </el-form-item>
         <el-form-item label="值集名称:" prop="codeName">
           <el-input v-model="form.codeName" placeholder="请输入值集名称" />
         </el-form-item>
@@ -126,6 +130,7 @@ export default defineComponent({
       form: <any>{
         parentId: "",
         type: "",
+        abbreviation: "",
       },
       defaultProps: {
         children: 'children',
@@ -135,8 +140,20 @@ export default defineComponent({
       treeData: <any>[],
       rules: {
         parentId: [
-          { required: true, message: "请输入项目项目类型", trigger: "change" },
+          { required: true, message: "请选择父值集", trigger: "change" },
         ],
+        type: [
+          { required: true, message: "请输入值集类型", trigger: "blur" },
+        ],
+        abbreviation: [
+          { required: true, message: "请输入值集简称", trigger: "blur" },
+        ],
+        codeName: [
+          { required: true, message: "请输入值集名称", trigger: "blur" },
+        ],
+        code: [
+          { required: true, message: "请输入值集代码", trigger: "blur" },
+        ]
       },
       pageObj: {
         page: 0,

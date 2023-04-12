@@ -38,11 +38,7 @@
           <el-input v-model="infoForm.cardId" disabled />
         </el-form-item>
         <el-form-item label="归口股室：" prop="mofDivCode">
-          <el-input
-            v-model="infoForm.mofDivCode"
-            placeholder="请选择股室"
-            @change="generateCardId"
-          />
+          <el-tree-select v-model="infoForm.mofDivCode" :data="mofDepData" :props="{children: 'children',label: 'mofDepName', value: 'mofDepCode'}" :render-after-expand="false" placeholder="请选择归属股室" @change="generateCardId" />
         </el-form-item>
         <el-form-item label="所属项目：" prop="projectId">
           <el-input v-model="infoForm.projectId" placeholder="请选择所属项目" />
@@ -51,6 +47,7 @@
           <el-input
             v-model="infoForm.approve"
             placeholder="请选择拨款账户(专户)"
+            @click="selectApprove"
           />
         </el-form-item>
         <el-form-item label="收款账户：" prop="collection">
@@ -98,6 +95,8 @@
         </el-form-item>
       </el-form>
     </div>
+    <!-- 选择拨款账号 -->
+    <selectApproveVue ref="selectApproveRef" @selected="getSelected" />
     <!-- d打印 -->
     <printView ref="printViewRef" />
   </div>
@@ -114,11 +113,14 @@ import {
 } from "vue";
 import { formatDate } from "@/utils/date";
 import printView from "./module/printfView.vue";
+import { basMofDepTree } from "@/api/dsAccounts";
+import selectApproveVue from "./module/selectApprove.vue";
 
 export default defineComponent({
   name: "payApplication",
   components: {
-    printView
+    printView,
+    selectApproveVue
   },
   setup() {
     const infoRef = ref();
@@ -131,13 +133,15 @@ export default defineComponent({
         cardId: "",
       },
       rules: {
-        mofDivCode: [{ required: true, message: "必填", trigger: "blur" }],
-        approve: [{ required: true, message: "必填", trigger: "blur" }],
+        mofDivCode: [{ required: true, message: "请选择归口股室", trigger: "blur" }],
+        approve: [{ required: true, message: "请选择拨款账户", trigger: "blur" }],
         collection: [{ required: true, message: "必填", trigger: "blur" }],
         remark: [{ required: true, message: "必填", trigger: "blur" }],
         purpose: [{ required: true, message: "必填", trigger: "blur" }],
         money: [{ required: true, message: "必填", trigger: "blur" }],
       },
+      mofDepData: [],
+      accountData: []
     });
     // 提交
     const submit = async () => {
@@ -157,20 +161,45 @@ export default defineComponent({
       }
       data.infoForm.cardId = val + new Date().getTime();
     };
+    // 勾选拨款账户
+    const selectApproveRef = ref();
+    const selectApprove = () => {
+      selectApproveRef.value.open()
+    }
+    const getSelected = (val: any) => {
+      console.log('当前勾选的账号', val);
+    }
+
+    
     // 打印
     const printViewRef = ref();
     const printfClick = () => {
       printViewRef.value.open(data.infoForm,data.user, data.dateTime);
     }
 
+    // 获取下拉数据
+    const getCodeData = () => {
+      // 股室
+      basMofDepTree({sourceId: 1}).then((res: any) => {
+        data.mofDepData = res.data;
+      })
+    }
+
+    onMounted(() => {
+      getCodeData();
+    })
+
     return {
       infoRef,
       printViewRef,
+      selectApproveRef,
       ...toRefs(data),
       formatDate,
       generateCardId,
       submit,
-      printfClick
+      selectApprove,
+      printfClick,
+      getSelected
     };
   },
 });

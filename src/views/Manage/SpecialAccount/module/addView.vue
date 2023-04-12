@@ -71,7 +71,7 @@ export default defineComponent({
         bank: '',
         accountCode: '',
         accountName: '',
-        amounts: 0,
+        amounts: null,
         status: '',
         mofDepCode: ''
       },
@@ -157,5 +157,8 @@ export default defineComponent({
 }
 .el-select, .el-input{
   width: 430px;
+}
+/deep/ .el-input-number input{
+  text-align: left;
 }
 </style>

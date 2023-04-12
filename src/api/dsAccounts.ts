@@ -73,3 +73,11 @@ export function addAccountLog(data: any) {
   })
 }
 
+// 获取所有银行账号
+export function getAccountsPage(data: any) {
+  return request({
+    url: '/ds-cz-datacenter-special-funds/dsAccounts/page',
+    method: 'post'
+  })
+}
+

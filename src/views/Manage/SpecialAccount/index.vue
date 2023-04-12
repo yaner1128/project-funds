@@ -36,7 +36,7 @@
     >
       <el-table-column prop="accountCode" label="账号" width="240" />
       <el-table-column prop="accountName" label="账号名称" min-width="200" />
-      <el-table-column prop="bank" label="开户行" min-width="200" />
+      <el-table-column prop="bankName" label="开户行名称" min-width="200" />
       <el-table-column prop="amounts" label="账户余额(单位：元)" width="200" />
       <el-table-column prop="status" label="状态" width="150">
         <template #default="{ row }">
