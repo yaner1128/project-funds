@@ -3,7 +3,6 @@
     <div class="head-container">
       <el-input v-model="query.accountName" placeholder="请输入账号名称" class="filter-item" style="width: 200px" clearable />
       <el-select
-        size="mini"
         v-model="query.status"
         placeholder="请选择账号状态"
         class="filter-item"

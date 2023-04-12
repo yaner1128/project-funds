@@ -28,3 +28,12 @@ export function simpleAccountingSubject(params: any) {
   })
 }
 
+// 会计科目
+export function addLedgerAccounts(data: any) {
+  return request({
+    url: '/ds-cz-datacenter-special-funds/dsLedgerAccounts/add',
+    method: 'post',
+    data
+  })
+}
+
