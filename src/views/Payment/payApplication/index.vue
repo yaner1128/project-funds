@@ -20,7 +20,7 @@
         class="demo-ruleForm"
         status-icon
       >
-        <el-form-item label="单号：" prop="cardId">
+        <el-form-item label="单号：" prop="allocationCode">
           <template #label>
             <span class="labelBox"
               >单号
@@ -35,13 +35,28 @@
               ：</span
             >
           </template>
-          <el-input v-model="infoForm.cardId" disabled />
+          <el-input v-model="infoForm.allocationCode" disabled />
         </el-form-item>
         <el-form-item label="归口股室：" prop="mofDivCode">
-          <el-tree-select v-model="infoForm.mofDivCode" :data="mofDepData" :props="{children: 'children',label: 'mofDepName', value: 'mofDepCode'}" :render-after-expand="false" placeholder="请选择归属股室" @change="generateCardId" />
+          <el-tree-select 
+          v-model="infoForm.mofDivCode" 
+          :data="mofDepData" 
+          :props="{
+            children: 'children',
+            label: 'mofDepName', 
+            value: 'mofDepCode'
+          }" 
+          :render-after-expand="false"
+          placeholder="请选择归属股室" 
+          @change="generateCardId" />
         </el-form-item>
-        <el-form-item label="所属项目：" prop="projectId">
-          <el-input v-model="infoForm.projectId" placeholder="请选择所属项目" />
+        <el-form-item label="所属项目：" prop="prjName">
+          <el-input 
+          ref="projectInput"
+          v-model="infoForm.prjName" 
+          placeholder="请选择所属项目" 
+          :disabled="checkProject" 
+          @click="btnProject"/>
         </el-form-item>
         <el-form-item label="拨款账户：" prop="approve">
           <el-input
@@ -55,6 +70,7 @@
             v-model="infoForm.collection"
             placeholder="请选择收款账户"
             :disabled="!infoForm.approve"
+            @click="checkCollection"
           />
         </el-form-item>
         <el-form-item label="金额：" prop="money">
@@ -99,6 +115,10 @@
     <selectApproveVue ref="selectApproveRef" @selected="getSelected" />
     <!-- d打印 -->
     <printView ref="printViewRef" />
+    <!-- 选择项目 -->
+    <checkProjectView ref="checkProjectViewRef" @reload="projectData"></checkProjectView>
+    <!-- 选择付款账号 -->
+    <selectCollection ref="selectCollectionRef" @selected="getCollection" />
   </div>
 </template>
 
@@ -113,24 +133,44 @@ import {
 } from "vue";
 import { formatDate } from "@/utils/date";
 import printView from "./module/printfView.vue";
-import { basMofDepTree } from "@/api/dsAccounts";
+import { basMofDepTree, getMaxAllocationCode, dsAllocationRequesAdd } from "@/api/dsAccounts";
 import selectApproveVue from "./module/selectApprove.vue";
+import checkProjectView from "./module/checkProjectView.vue";
+import { da } from "element-plus/es/locale";
+import selectCollection from "./module/selectCollection.vue";
+import { ElMessage } from "element-plus";
 
 export default defineComponent({
   name: "payApplication",
   components: {
     printView,
-    selectApproveVue
+    selectApproveVue,
+    checkProjectView,
+    selectCollection
   },
   setup() {
     const infoRef = ref();
+    const checkProjectViewRef = ref();
+    const projectInput = ref();
+    const selectCollectionRef = ref();
     const data = reactive({
       dateTime: formatDate(new Date(), "yyyy-MM-dd hh:mm:ss"),
       user: {
         agencyName: "溆浦财政局-国库股-出纳",
       },
       infoForm: <any>{
-        cardId: "",
+        mofDepName: "",
+        allocationCode: "",
+        prjName: "",
+        prjid: "",
+        bankName: "",
+        accountName : "",
+        accountCode: "",
+        approve: "",
+        collection: "",
+        collectionBankName: "",
+        collectionAccountName: "",
+        collectionAccountCode: ""
       },
       rules: {
         mofDivCode: [{ required: true, message: "请选择归口股室", trigger: "blur" }],
@@ -141,8 +181,22 @@ export default defineComponent({
         money: [{ required: true, message: "必填", trigger: "blur" }],
       },
       mofDepData: [],
-      accountData: []
+      accountData: [],
+      checkProject: true, //项目选择
+      mofDepCode: "",
+      projectData: (row:any) => { 
+        data.infoForm.prjName = row.prjName;
+        data.infoForm.prjid = row.prjid
+      },
+      checkCollection: () => { 
+        selectCollectionRef.value.open(data.infoForm.accountCode);
+      }
     });
+    const btnProject = () => {
+      projectInput.value.blur;
+      checkProjectViewRef.value.init(data.mofDepCode);
+    }
+
     // 提交
     const submit = async () => {
       if (!infoRef.value) return;
@@ -150,31 +204,69 @@ export default defineComponent({
         if (valid) {
           console.log("submit!");
           console.log(data.infoForm);
+          const list = {
+            allocationTime: data.dateTime, //申请时间
+            allocationmofcode: data.mofDepCode, //股室
+            allocationCode: data.infoForm.allocationCode, //单号
+            prjid: data.infoForm.prjid, // 项目
+            outaccountcode: data.infoForm.accountCode,
+            inaccountcode: data.infoForm.collectionAccountCode,
+            amount:data.infoForm.money, // 金额
+            remark: data.infoForm.remark, // 摘要
+            usepurposeapplication: data.infoForm.purpose, //用途
+          }
+          dsAllocationRequesAdd(list).then((res: any) => {
+            if (res.code == 200) { 
+              ElMessage.success(res.message);
+            }
+          })
         }
       });
     };
     // 生成单号
     const generateCardId = (val: any) => {
-      if (!val) {
-        data.infoForm.cardId = "";
-        return;
-      }
-      data.infoForm.cardId = val + new Date().getTime();
+      console.log(val);
+      data.infoForm.mofDepName = data.mofDepData.filter((item: any) => {
+        return item.mofDepCode == val
+      });
+      data.checkProject = false;
+      data.mofDepCode = val;
+      data.infoForm.prjName = "";
+      data.infoForm.prjid = ""
+      getMaxAllocationCode({mofCode: val}).then((res: any) => {
+        data.infoForm.allocationCode = res.data.allocationCode
+      })
     };
     // 勾选拨款账户
     const selectApproveRef = ref();
     const selectApprove = () => {
       selectApproveRef.value.open()
     }
+    // 获取拨款账号
     const getSelected = (val: any) => {
       console.log('当前勾选的账号', val);
+      data.infoForm.bankName = val.bankName;
+      data.infoForm.accountName = val.accountName;
+      data.infoForm.accountCode = val.accountCode;
+      data.infoForm.approve = val.bankName + ' - ' + val.accountName + ' - ' + val.accountCode;
+      data.infoForm.collectionBankName = "";
+      data.infoForm.collectionAccountName = "";
+      data.infoForm.collectionAccountCode = "";
+      data.infoForm.collection = "";
     }
-
+    // 获取付款账号
+    const getCollection= (val: any) => {
+      console.log('当前付款的账号', val);
+      data.infoForm.collectionBankName = val.bankName;
+      data.infoForm.collectionAccountName = val.accountName;
+      data.infoForm.collectionAccountCode = val.accountCode;
+      data.infoForm.collection = val.bankName + ' - ' + val.accountName + ' - ' + val.accountCode;
+    }
     
     // 打印
     const printViewRef = ref();
     const printfClick = () => {
-      printViewRef.value.open(data.infoForm,data.user, data.dateTime);
+      printViewRef.value.open(data.infoForm, data.user, data.dateTime, data.mofDepCode);
     }
 
     // 获取下拉数据
@@ -199,7 +291,12 @@ export default defineComponent({
       submit,
       selectApprove,
       printfClick,
-      getSelected
+      getSelected,
+      btnProject,
+      checkProjectViewRef,
+      projectInput,
+      selectCollectionRef,
+      getCollection
     };
   },
 });

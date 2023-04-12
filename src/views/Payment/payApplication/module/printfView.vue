@@ -33,38 +33,38 @@
         <!--  -->
         <tr>
           <td class="column" colspan="3">对应归口股市：</td>
-          <td class="value" colspan="3"></td>
+          <td class="value" colspan="3">{{ mofDepCode }} {{ listData.mofDepName[0].mofDepName }}</td>
           <td class="value" colspan="6"></td>
         </tr>
         <!-- 付款人 全称 收款人 全称 -->
         <tr>
           <td class="column" rowspan="3" colspan="1">付款人</td>
           <td class="column" colspan="2">全&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称：</td>
-          <td class="value" colspan="3">{{ listData.payerName }}</td>
+          <td class="value" colspan="3">{{ listData.collectionAccountName }}</td>
           <td class="column" rowspan="3" colspan="1">收款人</td>
           <td class="column" colspan="2">全&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称：</td>
-          <td class="value" colspan="3">{{ listData.receiverName }}</td>
+          <td class="value" colspan="3">{{ listData.accountName }}</td>
         </tr>
         <!-- 账号 -->
         <tr>
           <td class="column" colspan="2">账&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号：</td>
-          <td class="value" colspan="3">{{ listData.payerAccNo }}</td>
+          <td class="value" colspan="3">{{ listData.collectionAccountCode }}</td>
           <td class="column" colspan="2">账&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号：</td>
-          <td class="value" colspan="3">{{ listData.receiverAccNo }}</td>
+          <td class="value" colspan="3">{{ listData.accountCode }}</td>
         </tr>
         <!-- 开户银行 -->
         <tr>
           <td class="column" colspan="2">开户银行：</td>
-          <td class="value" colspan="3">{{ listData.payerOpenBank }}</td>
+          <td class="value" colspan="3">{{ listData.collectionBankName }}</td>
           <td class="column" colspan="2">开户银行：</td>
-          <td class="value" colspan="3">{{ listData.receiverOpenBank }}</td>
+          <td class="value" colspan="3">{{ listData.bankName }}</td>
         </tr>
         <!-- 金额 -->
         <tr>
           <td class="column" colspan="3">人民币（大写）</td>
-          <td class="value"  colspan="3" style="font-weight: 600;">{{ menoyToUppercase(listData.payAppAmt) }}</td>
+          <td class="value"  colspan="3" style="font-weight: 600;">{{ menoyToUppercase(listData.money) }}</td>
           <td class="column" colspan="3">金额（小写）</td>
-          <td class="value" colspan="3" style="text-align: right;">{{ numFormat(listData.payAppAmt) }}</td>
+          <td class="value" colspan="3" style="text-align: right;">{{ numFormat(listData.money) }}</td>
         </tr>
         <!--  -->
         <tr>
@@ -74,18 +74,18 @@
         <!-- 摘要 -->
         <tr>
           <td class="column" colspan="3">摘&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;要：</td>
-          <td class="value" colspan="9"></td>
+          <td class="value" colspan="9">{{ listData.remark }}</td>
         </tr>
         <!-- 用途 -->
         <tr>
           <td class="column" colspan="3">用&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;途：</td>
-          <td class="value" colspan="9"></td>
+          <td class="value" colspan="9">{{ listData.purpose }}</td>
         </tr>
       </table>
       <div class="flexBox">
         <div>
           <span>制单人：</span>
-          <span style="color: #1890ff;"></span>
+          <span style="color: #1890ff;">{{ user.agencyName }}</span>
         </div>
         <div>
           <span>审核人：</span>
@@ -123,6 +123,8 @@ export default defineComponent({
       dialogFormVisible: false,
       listData: <any>{},
       dateTime: "",
+      mofDepCode: "",
+      user: <any>{},
     });
 
     
@@ -161,11 +163,14 @@ export default defineComponent({
     };
     
     // 打开弹窗
-    const open = (row:any, user:any, dateTime:any) => {
+    const open = (row:any, user:any, dateTime:any, mofDepCode:any) => {
       data.dialogFormVisible = true;
       console.log('11', row)
       console.log('22', user)
+      data.listData = row;
+      data.user = user;
       data.dateTime = dateTime;
+      data.mofDepCode = mofDepCode;
     };
     // 关闭
     const resetForm = () => {

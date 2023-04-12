@@ -98,9 +98,11 @@ export default defineComponent({
       data.dialogFormVisible = false;
     };
     // 确认提交
-    const submitClick = async() => {
-      emit('selected', data.selectRow);
-      data.dialogFormVisible = false;
+    const submitClick = async () => {
+      if (data.selectRow) { 
+        emit('selected', data.selectRow);
+        data.dialogFormVisible = false;
+      }
     };
 
     // 设置高度

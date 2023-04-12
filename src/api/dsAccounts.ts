@@ -81,3 +81,20 @@ export function getAccountsPage(data: any) {
   })
 }
 
+// 新增专户付款申请生成单号
+export function getMaxAllocationCode(params: any) {
+  return request({
+    url: '/ds-cz-datacenter-special-funds/dsAllocationReques/getMaxAllocationCode',
+    method: 'post',
+    params
+  })
+}
+
+// 新增专户付款申请
+export function dsAllocationRequesAdd(data: any) {
+  return request({
+    url: '/ds-cz-datacenter-special-funds/dsAllocationReques/add',
+    method: 'post',
+    data
+  })
+}
