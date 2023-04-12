@@ -5,20 +5,15 @@
     v-model="dialogFormVisible"
     :lock-scroll="true"
     width="600px"
-    :title="title"
+    title="添加财政专户"
     :before-close="resetForm"
   >
-    <template #header>
-      <div class="my-header">
+    <div class="dialog_container">
+      <!-- <div class="my-header">
         <h3 class="back">
-          <span class="icon_container" @click="back"
-            ><svg-icon icon-class="back" class="el-input__icon"
-          /></span>
           <span>当前操作员：溆浦县财政局-国库股-欧阳翠花</span>
         </h3>
-      </div>
-    </template>
-    <div class="dialog_container">
+      </div> -->
       <el-form ref="addFormRef" :model="addForm" label-width="100px" :rules="rules">
         <el-form-item label="开户银行：" prop="bank">
           <el-tree-select v-model="addForm.bank" :data="optionData" :props="{children: 'children',label: 'codeName', value: 'code'}" :render-after-expand="false" placeholder="请选择开户银行" />
@@ -30,15 +25,15 @@
           <el-input v-model="addForm.accountName" placeholder="请输入账号名称" />
         </el-form-item>
         <el-form-item label="余额：" prop="amounts">
-          <el-input v-model="addForm.amounts" placeholder="请输入余额" />
+          <el-input-number v-model="addForm.amounts" :controls="false" placeholder="请输入余额"  />
         </el-form-item>
         <el-form-item label="账号状态：" prop="status">
           <el-select v-model="addForm.status"  placeholder="请选择账号状态">
             <el-option
               v-for="item in statusOption"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key="item.code"
+              :label="item.codeName"
+              :value="item.code"
             />
           </el-select>
         </el-form-item>
@@ -59,7 +54,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref, toRefs } from "vue";
 import Pagination from "@/components/Pagination/index.vue";
-import { specialFundsEleUnionTree, basMofDepTree, addDsAccounts } from "@/api/dsAccounts";
+import { specialFundsEleUnionTree, basMofDepTree, addDsAccounts, getAccountsStatus } from "@/api/dsAccounts";
 import { ElMessage } from "element-plus";
 
 export default defineComponent({
@@ -67,7 +62,7 @@ export default defineComponent({
   components: {
     Pagination,
   },
-  setup() {
+  setup(props, { emit }) {
     const addFormRef = ref();
     const data = reactive({
       title: "溆浦县城乡建设局",
@@ -76,7 +71,7 @@ export default defineComponent({
         bank: '',
         accountCode: '',
         accountName: '',
-        amounts: '',
+        amounts: 0,
         status: '',
         mofDepCode: ''
       },
@@ -95,11 +90,7 @@ export default defineComponent({
         mofDepCode: [{ required: true, message: "请选择归属股室", trigger: "blur" }]
       },
       optionData: [],
-      statusOption: [
-        { label: '使用中', value: '0' },
-        { label: '已删除', value: '1' },
-        { label: '停用', value: '2' }
-      ],
+      statusOption: [],
       mofDepData: [],
     });
     // 打开弹窗
@@ -123,6 +114,8 @@ export default defineComponent({
           addDsAccounts(data.addForm).then((res: any) => {
             if(res.code === 200) {
               ElMessage.success(res.message);
+              resetForm();
+              emit('reload')
             }else{
               ElMessage.warning(res.message);
             }
@@ -137,8 +130,12 @@ export default defineComponent({
         data.optionData = res.data;
       })
       // 股室
-      basMofDepTree().then((res: any) => {
+      basMofDepTree({sourceId: 1}).then((res: any) => {
         data.mofDepData = res.data;
+      })
+      // 状态
+      getAccountsStatus().then((res: any) => {
+        data.statusOption = res.data;
       })
     }
 

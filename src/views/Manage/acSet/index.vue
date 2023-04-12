@@ -1,5 +1,12 @@
 <template>
   <div class="app-container">
+    <div class="head-container">
+      <el-date-picker v-model="query.year" type="year" value-format="YYYY" class="filter-item" placeholder="请选择年份"/>
+      <el-input v-model="query.accountSetName" placeholder="请输入账套名称" class="filter-item" style="width: 200px" clearable />
+      <el-button type="primary" class="filter-item"  @click="doSimpleQuery">
+        搜索
+      </el-button>
+    </div>
     <el-button type="primary" class="tableBtn" @click="addClick">
       <el-icon class="el-icon--left"><Plus /></el-icon>
       添加账套
@@ -14,14 +21,16 @@
         color: '#333',
       }"
     >
-      <el-table-column prop="id" label="账套编号" />
-      <el-table-column prop="agencyName" label="账套名称" />
+      <el-table-column prop="year" label="账套会计年份" width="150px" />
+      <el-table-column prop="accountSetCode" label="账套编号" />
+      <el-table-column prop="accountSetName" label="账套名称" />
+      <el-table-column prop="remark" label="备注" />
       <el-table-column label="操作" fixed="right" width="300">
-        <template #default>
+        <template #default="{ row }">
           <el-button link type="primary" class="tableBtn">
             <el-icon class="el-icon--left"><Ticket /></el-icon>查看账目
           </el-button>
-          <el-button link type="primary" class="tableBtn">
+          <el-button link type="primary" class="tableBtn" @click="accountSubject(row.accountSetCode)">
             <el-icon class="el-icon--left"><Document /></el-icon>会计科目
           </el-button>
         </template>
@@ -29,24 +38,37 @@
     </el-table>
     <!-- 分页 -->
     <Pagination :pageObj="pageObj" :total="total" @search="doSimpleQuery" />
+    <!-- 新增账套 -->
+    <addView ref="addViewRef" @reload="doSimpleQuery" />
+    <!-- 会计科目 -->
+    <accountSub ref="accountSubRef" @reload="doSimpleQuery" />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref, toRefs, nextTick } from "vue";
-import { getProject } from "@/api/manage";
 import Pagination from "@/components/Pagination/index.vue";
 import { Ticket, Document } from '@element-plus/icons-vue';
+import { getAccountSets } from "@/api/dsAccountSets";
+import addView from "./module/addView.vue";
+import accountSub from './module/accountSub.vue';
+
 export default defineComponent({
   name: "acSet",
   components: {
     Pagination,
     Ticket,
-    Document
+    Document,
+    addView,
+    accountSub
   },
   setup() {
     const data = reactive({
       maxHeight: 500,
+      query: {
+        year: '',
+        accountSetName: ''
+      },
       tableData: [],
       pageObj: {
         page: 0,
@@ -56,20 +78,30 @@ export default defineComponent({
     });
     // 查询
     const doSimpleQuery = () => {
-      getProject().then((res: any) => {
+      const params = Object.assign({
+        currentPageIndex: data.pageObj.page,
+        pageSize: data.pageObj.size
+      }, data.query)
+      getAccountSets(params).then((res: any) => {
         data.tableData = res.data.records;
-        data.total = res.data.total;
+        data.total = Number(res.data.total);
       })
     }
     // 新增账套
+    const addViewRef = ref();
     const addClick = () => {
-
+      addViewRef.value.open();
+    }
+    // 会计科目
+    const accountSubRef = ref();
+    const accountSubject = (accountSetCode: any) => {
+      accountSubRef.value.open(accountSetCode);
     }
 
     // 设置高度
     const setHeight = () => {
       nextTick(() => {
-        data.maxHeight = innerHeight - 300 // 这里的X就是顶部栏的高度
+        data.maxHeight = innerHeight - 355 // 这里的X就是顶部栏的高度
       })
     }
     // 高度自适应
@@ -88,9 +120,12 @@ export default defineComponent({
     })
 
     return {
+      addViewRef,
+      accountSubRef,
       ...toRefs(data),
       doSimpleQuery,
-      addClick
+      addClick,
+      accountSubject
     };
   },
 });

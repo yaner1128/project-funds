@@ -5,16 +5,22 @@
     v-model="dialogFormVisible"
     :lock-scroll="true"
     width="600px"
-    title="余额修正"
+    title="添加账套"
     :before-close="resetForm"
   >
     <div class="dialog_container">
-      <el-form ref="addFormRef" :model="addForm" label-width="100px" :rules="rules">
-        <el-form-item label="余额：" prop="modifyAmount">
-          <el-input-number v-model="addForm.modifyAmount" :controls="false" placeholder="请输入修正余额" />
+      <el-form ref="addFormRef" :model="addForm" label-width="120px" :rules="rules">
+        <el-form-item label="账套会计年份：" prop="year">
+          <el-date-picker v-model="addForm.year" type="year" value-format="YYYY" placeholder="请选择账套会计年份"/>
         </el-form-item>
-        <el-form-item label="修改原因：" prop="remark">
-          <el-input v-model="addForm.remark" placeholder="请输入修正原因" :autosize="{ minRows: 5 }" type="textarea" />
+        <el-form-item label="账套编码：" prop="accountSetCode">
+          <el-input v-model="addForm.accountSetCode" placeholder="请输入账套编码" />
+        </el-form-item>
+        <el-form-item label="账套名称：" prop="accountSetName">
+          <el-input v-model="addForm.accountSetName" placeholder="请输入账套名称" />
+        </el-form-item>
+        <el-form-item label="备注：" prop="remark">
+          <el-input v-model="addForm.remark" placeholder="请输入备注" :autosize="{ minRows: 5 }" type="textarea" />
         </el-form-item>
       </el-form>
     </div>
@@ -29,9 +35,8 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref, toRefs } from "vue";
-import { getProject } from "@/api/manage";
 import Pagination from "@/components/Pagination/index.vue";
-import { addAccountLog } from "@/api/dsAccounts";
+import { addAccountSets } from "@/api/dsAccountSets";
 import { ElMessage } from "element-plus";
 
 export default defineComponent({
@@ -43,25 +48,20 @@ export default defineComponent({
     const addFormRef = ref();
     const data = reactive({
       dialogFormVisible: false,
-      accountCode: null,
       addForm: {
-        modifyAmount: null,
-        remark: '',
+        year: '',
+        accountSetCode: '',
+        accountSetName: '',
+        remark: ''
       },
-      tableData: [],
-      pageObj: {
-        page: 0,
-        size: 10,
-      },
-      total: 0,
       rules: {
-        modifyAmount: [{ required: true, message: "请输入修正金额", trigger: "blur" }],
-        remark: [{ required: true, message: "请输入修正原因", trigger: "blur" }],
+        year: [{ required: true, message: "请选择账套会计年份", trigger: "change" }],
+        accountSetCode: [{ required: true, message: "请输入账套编号", trigger: "blur" }],
+        accountSetName: [{ required: true, message: "请输入账套名称", trigger: "blur" }]
       }
     });
     // 打开弹窗
-    const open = (accountCode: any) => {
-      data.accountCode = accountCode;
+    const open = () => {
       data.dialogFormVisible = true;
     };
     // 关闭
@@ -69,15 +69,11 @@ export default defineComponent({
       addFormRef.value.resetFields();
       data.dialogFormVisible = false;
     };
-    // 余额修正提交
+    // 添加专户
     const submitClick = async() => {
       await addFormRef.value.validate((valid: any, fields: any) => {
         if (valid) {
-          console.log('校验成功')
-          const params = Object.assign({
-            accountCode: data.accountCode
-          }, data.addForm)
-          addAccountLog(params).then((res: any) => {
+          addAccountSets(data.addForm).then((res: any) => {
             if(res.code === 200) {
               ElMessage.success(res.message);
               resetForm();
@@ -105,7 +101,7 @@ export default defineComponent({
 .scrollbar {
   height: calc(100vh - 173px);
 }
-/deep/ .el-input-number input{
-  text-align: left;
+.el-select, .el-input{
+  width: 430px;
 }
 </style>
