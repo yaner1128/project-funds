@@ -139,6 +139,7 @@ import checkProjectView from "./module/checkProjectView.vue";
 import { da } from "element-plus/es/locale";
 import selectCollection from "./module/selectCollection.vue";
 import { ElMessage } from "element-plus";
+import { useStore } from 'vuex'
 
 export default defineComponent({
   name: "payApplication",
@@ -149,6 +150,7 @@ export default defineComponent({
     selectCollection
   },
   setup() {
+    const store = useStore();
     const infoRef = ref();
     const checkProjectViewRef = ref();
     const projectInput = ref();
@@ -156,7 +158,7 @@ export default defineComponent({
     const data = reactive({
       dateTime: formatDate(new Date(), "yyyy-MM-dd hh:mm:ss"),
       user: {
-        agencyName: "溆浦财政局-国库股-出纳",
+        agencyName: store.state.user.user.username,
       },
       infoForm: <any>{
         mofDepName: "",
@@ -296,7 +298,8 @@ export default defineComponent({
       checkProjectViewRef,
       projectInput,
       selectCollectionRef,
-      getCollection
+      getCollection,
+      store
     };
   },
 });
