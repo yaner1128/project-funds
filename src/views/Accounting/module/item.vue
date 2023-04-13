@@ -35,11 +35,15 @@ export default defineComponent({
     treeData: {
       type: Array,
       default: []
+    },
+    curData: {
+      type: Object,
+      default: {}
     }
   },
   setup(props, { emit }) {
     const data = reactive({
-      formInline: {
+      formInline: <any>{
         ledgerAccountCode: "",
         amount: null,
       },
@@ -52,18 +56,28 @@ export default defineComponent({
     const checkValid = async () => {
       return await addFormRef.value.validate((valid: any, fields: any) => {
         if (valid) {
-          emit('putData', { [data.formInline.ledgerAccountCode]: data.formInline })
+          var label = data.formInline.ledgerAccountCode + new Date().getTime()
+          emit('putData', { [label]: data.formInline })
           return true;
         }
         return false;
       })
     }
 
+    const clear = () => {
+      addFormRef.value.resetFields();
+    }
+
+    watch(() => props.curData, (val) => {
+      data.formInline = val;
+    }, {immediate: true})
+
     return {
       addFormRef,
       ...toRefs(data),
       ...toRefs(props),
-      checkValid
+      checkValid,
+      clear
     };
   },
 });

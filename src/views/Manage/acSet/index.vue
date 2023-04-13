@@ -27,7 +27,7 @@
       <el-table-column prop="remark" label="备注" />
       <el-table-column label="操作" fixed="right" width="300">
         <template #default="{ row }">
-          <el-button link type="primary" class="tableBtn">
+          <el-button link type="primary" class="tableBtn" @click="jumpClick(row.accountSetName)">
             <el-icon class="el-icon--left"><Ticket /></el-icon>查看账目
           </el-button>
           <el-button link type="primary" class="tableBtn" @click="accountSubject(row.accountSetCode)">
@@ -46,12 +46,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, reactive, ref, toRefs, nextTick } from "vue";
+import { defineComponent, onMounted, reactive, ref, toRefs, nextTick, watch } from "vue";
 import Pagination from "@/components/Pagination/index.vue";
 import { Ticket, Document } from '@element-plus/icons-vue';
 import { getAccountSets } from "@/api/dsAccountSets";
 import addView from "./module/addView.vue";
 import accountSub from './module/accountSub.vue';
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "acSet",
@@ -63,6 +64,7 @@ export default defineComponent({
     accountSub
   },
   setup() {
+    const router = useRouter();
     const data = reactive({
       maxHeight: 500,
       query: {
@@ -97,6 +99,10 @@ export default defineComponent({
     const accountSubject = (accountSetCode: any) => {
       accountSubRef.value.open(accountSetCode);
     }
+    // 跳转
+    const jumpClick = (accountSetName: any) => {
+      router.push({ path: '/accounting/index', query: { accountSetName: accountSetName } })
+    }
 
     // 设置高度
     const setHeight = () => {
@@ -125,7 +131,8 @@ export default defineComponent({
       ...toRefs(data),
       doSimpleQuery,
       addClick,
-      accountSubject
+      accountSubject,
+      jumpClick
     };
   },
 });

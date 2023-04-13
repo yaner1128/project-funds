@@ -25,7 +25,7 @@
         <div class="left">
           <div class="title">借方</div>
           <div class="pay_container">
-            <itemVue ref="itemVueRef1" :disabled="!accountSetCode" :treeData="treeData1" @putData="getDebitData" />
+            <itemVue ref="itemVueRef1" :disabled="!accountSetCode" :curData="sendData" :treeData="treeData1" @putData="getDebitData" />
           </div>
         </div>
         <div class="right">
@@ -33,7 +33,7 @@
           <div class="pay_container">
             <el-scrollbar class="scrollbar">
               <template v-for="key in creditData" :key="key">
-                <itemVue ref="itemVueRef2" :disabled="!accountSetCode" :treeData="treeData2" @putData="getCreditData" />
+                <itemVue ref="itemVueRef2" :disabled="!accountSetCode" :curData="key" :treeData="treeData2" @putData="getCreditData" />
               </template>
               <span v-if="accountSetCode" class="insertIcon" @click="insertClick"
                 ><el-icon><CirclePlus /></el-icon
@@ -64,12 +64,14 @@ import {
 } from "vue";
 import { getProject } from "@/api/manage";
 import Pagination from "@/components/Pagination/index.vue";
-import { addAccountLog } from "@/api/dsAccounts";
+import { addDsLedger } from "@/api/bookkeeping";
 import { ElMessage } from "element-plus";
 import itemVue from "./item.vue";
 import { CirclePlus } from "@element-plus/icons-vue";
 import selectAccountSet from './selectAccountSet.vue';
 import { simpleAccountingSubject } from "@/api/dsAccountSets";
+import { useStore } from "vuex";
+import { formatDate } from "@/utils/date";
 
 export default defineComponent({
   name: "addView",
@@ -79,12 +81,15 @@ export default defineComponent({
     selectAccountSet
   },
   setup(props, { emit }) {
+    const store = useStore();
     const data = reactive({
+      user: store.state.user.user,
       dialogFormVisible: false,
       maxHeight: 400,
       accountSetCode: "",
       accountSetName: "",
       creditData: [{}],
+      sendData: {},
       treeData1: [],
       treeData2: [],
       curCreditData: <any>{},
@@ -93,6 +98,7 @@ export default defineComponent({
     // 打开弹窗
     const open = () => {
       data.creditData = [{}];
+      data.sendData = {};
       data.dialogFormVisible = true;
       autoHeight();
     };
@@ -107,15 +113,23 @@ export default defineComponent({
       data.accountSetName = val.accountSetName;
       data.accountSetCode = val.accountSetCode;
       // 借
-      simpleAccountingSubject({ accountSetCode: val.accountSetCode,  accountDirection: '1'}).then((res) => {
+      simpleAccountingSubject({ accountSetCode: val.accountSetCode,  accountDirection: '1'}).then((res: any) => {
         data.treeData1 = res.data;
       })
       // 贷
-      simpleAccountingSubject({ accountSetCode: val.accountSetCode,  accountDirection: '0'}).then((res) => {
+      simpleAccountingSubject({ accountSetCode: val.accountSetCode,  accountDirection: '0'}).then((res: any) => {
         data.treeData2 = res.data;
       })
+      clearItem();
     }
-
+    const clearItem = () => {
+      // 借方数据清除
+      itemVueRef1.value.clear();
+      // 贷方数据清除
+      for(var i=0; i<itemVueRef2.value.length; i++) {
+        itemVueRef2.value[i].clear()
+      }
+    }
     // 插入贷方科目
     const insertClick = () => {
       data.creditData.push({});
@@ -124,6 +138,7 @@ export default defineComponent({
     // 关闭
     const resetForm = () => {
       data.creditData = [];
+      data.sendData = {};
       data.accountSetCode = "";
       data.accountSetName = "";
       data.treeData1 = []
@@ -134,6 +149,7 @@ export default defineComponent({
     const itemVueRef1 = ref<any>();
     const itemVueRef2 = ref<any>();
     const submitClick = async () => {
+      data.debitData = {};
       data.curCreditData = {};
       // 借方数据校验
       let idError = true;
@@ -147,26 +163,64 @@ export default defineComponent({
         }
       }
       if(idError && creditError) {
+        const isEqual = checkIsEqual();
+        if(!isEqual) {
+          ElMessage.error('借、贷金额必须相等!');
+          return;
+        }
         console.log('校验成功');
         const allData = <any>Object.assign(data.curCreditData, data.debitData);
         const temp = <any>[];
+        const ledgerTime = formatDate(new Date(), 'yyyy-MM-dd hh:mm:ss')
         for(var key in allData){
           temp.push(Object.assign({
-            accountSetCode: data.accountSetCode
+            accountSetCode: data.accountSetCode,
+            mofDivCode: data.user.mofDivCode,
+            ledgerTime: ledgerTime
           }, allData[key]))
         }
-
         console.log(temp)
+        addDsLedger(temp).then((res: any) => {
+          if(res.code === 200) {
+            ElMessage.success('新增成功!')
+            resetForm();
+            emit('reload')
+            return
+          }
+          ElMessage.warning(res.message)
+        })
       }
     };
-    const getCreditData = (val: any) => {
-      for(var k in val) {
-        data.curCreditData[k] = val[k];
+    // 判断借贷是否相等
+    const checkIsEqual = () => {
+      // 获取借方金额
+      let borrow_value = 0;
+      for(var k in data.debitData) {
+        borrow_value += Number(data.debitData[k].amount);
       }
+      // 获取贷方金额合计
+      let credit_value = 0;
+      for(var k in data.curCreditData) {
+        credit_value += Number(data.curCreditData[k].amount);
+      }
+
+      if(borrow_value===credit_value) {
+        return true;
+      }
+      return false;
     }
+    // 借
     const getDebitData = (val: any) => {
+      console.log(val)
       for(var k in val) {
         data.debitData[k] = val[k]
+      }
+    }
+    // 贷
+    const getCreditData = (val: any) => {
+      console.log(val)
+      for(var k in val) {
+        data.curCreditData[k] = val[k];
       }
     }
 
