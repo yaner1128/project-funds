@@ -40,10 +40,11 @@ export function deleteDsAccounts(params: any) {
 }
 
 // 获取开户银行下拉数据
-export function specialFundsEleUnionTree() {
+export function specialFundsEleUnionTree(params: any) {
   return request({
     url: '/ds-cz-datacenter-special-funds/specialFundsEleUnion/tree',
-    method: 'get'
+    method: 'get',
+    params
   })
 }
 
@@ -115,8 +116,16 @@ export function updateDsAllocationReques(data: any) {
     data
   })
 }
+// 详情
+export function dsAllocationDetail(params: any) {
+  return request({
+    url: '/ds-cz-datacenter-special-funds/dsAllocationReques/detail',
+    method: 'get',
+    params
+  })
+}
 // 删除
-export function deleteDsAllocationReques(params: any) {
+export function deleteDsAllocation(params: any) {
   return request({
     url: '/ds-cz-datacenter-special-funds/dsAllocationReques/delete',
     method: 'post',

@@ -171,6 +171,7 @@ import Pagination from "@/components/Pagination/index.vue";
 import { getPermissionTree } from '@/api/permission'
 import { getMenusTree } from '@/api/menu'
 import { editPermission, editMenu, get } from '@/api/role'
+import config from "@/config";
 
 export default defineComponent({
   name: "role",
@@ -291,7 +292,7 @@ export default defineComponent({
     // 菜单权限保存
     const saveMenu = () => {
       data.menuLoading = true
-      const role = <any>{ id: data.currentId, menuIds: [] }
+      const role = <any>{ id: data.currentId, menuIds: [], serviceId: config.serviceId }
       // 得到半选的父节点数据，保存起来
       menuRef.value.getHalfCheckedNodes().forEach(function(val: any) {
         const permission = val.id

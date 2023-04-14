@@ -27,7 +27,7 @@
               <el-tooltip
                 class="box-item"
                 effect="dark"
-                content="依据拨款单生成日期"
+                content="生成规则：股室简称-日期-排序号"
                 placement="top-start"
               >
                 <el-icon><QuestionFilled /></el-icon>
@@ -43,8 +43,8 @@
           :data="mofDepData" 
           :props="{
             children: 'children',
-            label: 'mofDepName', 
-            value: 'mofDepCode'
+            label: 'codeName', 
+            value: 'code'
           }" 
           :render-after-expand="false"
           placeholder="请选择归属股室" 
@@ -74,10 +74,7 @@
           />
         </el-form-item>
         <el-form-item label="金额：" prop="money">
-          <el-input
-            v-model="infoForm.money"
-            placeholder="请输入金额"
-          />
+          <el-input-number v-model="infoForm.money" :controls="false" placeholder="请输入金额" />
         </el-form-item>
         <el-form-item label="摘要：" prop="remark">
           <el-input
@@ -107,7 +104,7 @@
         </el-form-item>
         <el-form-item class="btn">
           <el-button type="primary" @click="submit">提交</el-button>
-          <el-button @click="printfClick">打印</el-button>
+          <el-button :disabled="!mofDepCode" @click="printfClick">打印</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -136,10 +133,11 @@ import printView from "./module/printfView.vue";
 import { basMofDepTree, getMaxAllocationCode, dsAllocationRequesAdd } from "@/api/dsAccounts";
 import selectApproveVue from "./module/selectApprove.vue";
 import checkProjectView from "./module/checkProjectView.vue";
-import { da } from "element-plus/es/locale";
 import selectCollection from "./module/selectCollection.vue";
 import { ElMessage } from "element-plus";
-import { useStore } from 'vuex'
+import { useStore } from 'vuex';
+import { getProjectEleUnionTree } from "@/api/codeManage";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "payApplication",
@@ -150,6 +148,7 @@ export default defineComponent({
     selectCollection
   },
   setup() {
+    const router = useRouter();
     const store = useStore();
     const infoRef = ref();
     const checkProjectViewRef = ref();
@@ -165,6 +164,7 @@ export default defineComponent({
         allocationCode: "",
         prjName: "",
         prjid: "",
+        money: null,
         bankName: "",
         accountName : "",
         accountCode: "",
@@ -208,18 +208,26 @@ export default defineComponent({
           console.log(data.infoForm);
           const list = {
             allocationTime: data.dateTime, //申请时间
-            allocationmofcode: data.mofDepCode, //股室
+            allocationMofCode: data.mofDepCode, //股室
             allocationCode: data.infoForm.allocationCode, //单号
-            prjid: data.infoForm.prjid, // 项目
-            outaccountcode: data.infoForm.accountCode,
-            inaccountcode: data.infoForm.collectionAccountCode,
+            prjId: data.infoForm.prjid, // 项目
+            outAccountCode: data.infoForm.accountCode,
+            inAccountCode: data.infoForm.collectionAccountCode,
             amount:data.infoForm.money, // 金额
             remark: data.infoForm.remark, // 摘要
             usepurposeapplication: data.infoForm.purpose, //用途
           }
           dsAllocationRequesAdd(list).then((res: any) => {
-            if (res.code == 200) { 
-              ElMessage.success(res.message);
+            if (res.code == 200) {
+              ElMessage({
+                message: '新增成功! 3秒后跳转付款申请管理页面。',
+                type: 'success',
+              })
+              setTimeout(() => {
+                infoRef.value.resetFields();
+                router.push('/Payment/Payment');
+              }, 3000)
+
             }
           })
         }
@@ -229,13 +237,13 @@ export default defineComponent({
     const generateCardId = (val: any) => {
       console.log(val);
       data.infoForm.mofDepName = data.mofDepData.filter((item: any) => {
-        return item.mofDepCode == val
+        return item.code == val
       });
       data.checkProject = false;
       data.mofDepCode = val;
       data.infoForm.prjName = "";
       data.infoForm.prjid = ""
-      getMaxAllocationCode({mofCode: val}).then((res: any) => {
+      getMaxAllocationCode({mofName: data.infoForm.mofDepName[0].abbreviation}).then((res: any) => {
         data.infoForm.allocationCode = res.data.allocationCode
       })
     };
@@ -267,14 +275,22 @@ export default defineComponent({
     
     // 打印
     const printViewRef = ref();
-    const printfClick = () => {
-      printViewRef.value.open(data.infoForm, data.user, data.dateTime, data.mofDepCode);
+    const printfClick = async () => {
+      await infoRef.value.validate((valid: any, fields: any) => {
+        if (valid) {
+          printViewRef.value.open(data.infoForm, data.user, data.dateTime, data.mofDepCode);
+        }
+      })
+      
     }
 
     // 获取下拉数据
     const getCodeData = () => {
       // 股室
-      basMofDepTree({sourceId: 1}).then((res: any) => {
+      // basMofDepTree({sourceId: 1}).then((res: any) => {
+      //   data.mofDepData = res.data;
+      // })
+      getProjectEleUnionTree({ type: 'MOF' }).then((res: any) => {
         data.mofDepData = res.data;
       })
     }
@@ -324,6 +340,13 @@ export default defineComponent({
 /deep/ .btn {
   .el-form-item__content {
     justify-content: center;
+  }
+}
+/deep/ .el-input-number {
+  width: 100%;
+  input{
+    text-align: left;
+    width: 100%;
   }
 }
 </style>

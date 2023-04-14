@@ -88,7 +88,6 @@ export function editPermission(data: any) {
 }
 
 export function editMenu(data: any) {
-  data = Object.assign({ serverId: config.serverId }, data)
   return request({
     url: '/ds-cz-datacenter-user/roles/menu',
     method: 'put',

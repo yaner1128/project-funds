@@ -66,7 +66,7 @@ export default defineComponent({
     });
     // 打开弹窗
     const open = (row: any) => {
-      data.noEqAccountCode = row;;
+      data.noEqAccountCode = row;
       getData();
       data.dialogFormVisible = true;
       autoHeight();

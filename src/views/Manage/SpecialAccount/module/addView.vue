@@ -126,7 +126,7 @@ export default defineComponent({
     // 获取下拉数据
     const getCodeData = () => {
       // 开户行
-      specialFundsEleUnionTree().then((res: any) => {
+      specialFundsEleUnionTree({type: 'BANK'}).then((res: any) => {
         data.optionData = res.data;
       })
       // 股室
