@@ -44,7 +44,7 @@
     </div>
     <template #footer>
       <div style="text-align: right">
-        <el-button @click="submitClick" type="primary">新建</el-button>
+        <el-button @click="submitClick" type="primary">确认</el-button>
         <el-button @click="resetForm" link>取消</el-button>
       </div>
     </template>

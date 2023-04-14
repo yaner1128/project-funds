@@ -194,7 +194,7 @@ export default defineComponent({
         data.type = val;
       },
       pageObj: {
-        page: 0,
+        page: 1,
         size: 10
       },
       total: 0,
@@ -292,7 +292,7 @@ export default defineComponent({
     // 菜单权限保存
     const saveMenu = () => {
       data.menuLoading = true
-      const role = <any>{ id: data.currentId, menuIds: [], serviceId: config.serviceId }
+      const role = <any>{ id: data.currentId, menuIds: [], serverId: config.serverId }
       // 得到半选的父节点数据，保存起来
       menuRef.value.getHalfCheckedNodes().forEach(function(val: any) {
         const permission = val.id
@@ -370,7 +370,7 @@ export default defineComponent({
       data.loading = true;
       const params = Object.assign(
         {
-          currentPageIndex: data.pageObj.page + 1,
+          currentPageIndex: data.pageObj.page,
           pageSize: data.pageObj.size,
           ascs: "id",
         },

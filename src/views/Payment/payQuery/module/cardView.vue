@@ -104,11 +104,11 @@
       <div class="flexBox">
         <div>
           <span>制单人：</span>
-          <span style="color: #1890ff">{{ detailsData.createdBy }}</span>
+          <span style="color: #1890ff">{{ detailsData.createdName }}</span>
         </div>
         <div>
           <span>审核人：</span>
-          <span style="color: #1890ff">{{ detailsData.isValid != '0' ? detailsData.updateBy : ""}}</span>
+          <span style="color: #1890ff">{{ detailsData.isValid != '0' ? detailsData.updateName : ""}}</span>
         </div>
         <div>
           <span>记账标志：</span>

@@ -11,7 +11,7 @@ export function getAgencys(params?: any) {
 
 export function getRoles(params: any) {
   params = Object.assign({
-    serviceId: config.serviceId
+    serverId: config.serverId
   }, params)
   return request({
     url: '/ds-cz-datacenter-user/roles',
@@ -66,14 +66,14 @@ export function getLevel() {
 
 export function del(id: string) {
   return request({
-    url: 'api/roles/' + id,
+    url: `/ds-cz-datacenter-user/roles/${id}`,
     method: 'delete'
   })
 }
 
 export function edit(data: any) {
   return request({
-    url: 'api/roles',
+    url: '/ds-cz-datacenter-user/roles',
     method: 'put',
     data
   })

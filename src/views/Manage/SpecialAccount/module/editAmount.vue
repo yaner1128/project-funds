@@ -29,16 +29,11 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref, toRefs } from "vue";
-import { getProject } from "@/api/manage";
-import Pagination from "@/components/Pagination/index.vue";
 import { addAccountLog } from "@/api/dsAccounts";
 import { ElMessage } from "element-plus";
 
 export default defineComponent({
   name: "addView",
-  components: {
-    Pagination,
-  },
   setup(props, { emit }) {
     const addFormRef = ref();
     const data = reactive({

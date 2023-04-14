@@ -49,7 +49,7 @@
           <el-button v-if="row.status !== -1" link type="primary" class="tableBtn" @click="editAmount(row.accountCode)">
             <el-icon class="el-icon--left"><Ticket /></el-icon>余额修正
           </el-button>
-          <el-button link type="primary" class="tableBtn">
+          <el-button link type="primary" class="tableBtn" @click="reportClick(row.accountCode)">
             <el-icon class="el-icon--left"><Document /></el-icon>查看报表
           </el-button>
         </template>
@@ -61,6 +61,8 @@
     <addView ref="addViewRef" @reload="doSimpleQuery" />
     <!-- 余额修正 -->
     <editAmount ref="editAmountRef"  @reload="doSimpleQuery" />
+    <!-- 报表 -->
+    <reportViewVue ref="reportViewRef" />
   </div>
 </template> 
 
@@ -71,6 +73,7 @@ import addView from './module/addView.vue';
 import { Ticket, Document } from '@element-plus/icons-vue';
 import editAmount from './module/editAmount.vue';
 import { getDsAccountsPage, getAccountsStatus } from "@/api/dsAccounts";
+import reportViewVue from "./module/reportView.vue";
 
 export default defineComponent({
   name: "SpecialAccount",
@@ -79,7 +82,8 @@ export default defineComponent({
     addView,
     editAmount,
     Ticket,
-    Document
+    Document,
+    reportViewVue
   },
   setup() {
     const data = reactive({
@@ -93,7 +97,7 @@ export default defineComponent({
       },
       tableData: [],
       pageObj: {
-        page: 0,
+        page: 1,
         size: 10
       },
       total: 0
@@ -117,6 +121,11 @@ export default defineComponent({
     const editAmountRef = ref();
     const editAmount = (accountCode: any) => {
       editAmountRef.value.open(accountCode);
+    }
+    // 查看报表
+    const reportViewRef = ref();
+    const reportClick = (accountCode: any) => {
+      reportViewRef.value.open(accountCode)
     }
     // 获取下拉数据
     const getCodeData = () => {
@@ -153,11 +162,13 @@ export default defineComponent({
     })
 
     return {
+      reportViewRef,
       addViewRef,
       editAmountRef,
       ...toRefs(data),
       doSimpleQuery,
       addClick,
+      reportClick,
       editAmount
     };
   },

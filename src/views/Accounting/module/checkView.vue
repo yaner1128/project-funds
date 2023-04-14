@@ -25,8 +25,6 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref, toRefs } from "vue";
-import { getProject } from "@/api/manage";
-import Pagination from "@/components/Pagination/index.vue";
 import { getDsLedgerDetail, updateDsLedger } from "@/api/bookkeeping";
 import { ElMessage } from "element-plus";
 import rejectView from '@/components/rejectView/index.vue';
@@ -35,7 +33,6 @@ import detailsVue from "./commonDetails.vue";
 export default defineComponent({
   name: "addView",
   components: {
-    Pagination,
     rejectView,
     detailsVue
   },

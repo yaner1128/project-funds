@@ -62,7 +62,7 @@ const globalConfig = {
   selectYear: '2022',
 
   /**
-   * serviceId
+   * serverId
    */
-   serviceId: 'ds-cz-datacenter-special-funds'
+   serverId: 'ds-cz-datacenter-special-funds'
 }

@@ -119,7 +119,7 @@ export default defineComponent({
         };
 
         const doQuery = () => {
-            data.pageObj.page = 0;
+            data.pageObj.page = 1;
             doSimpleQuery();
         };
         

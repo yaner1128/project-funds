@@ -124,14 +124,14 @@ export default defineComponent({
       maxHeight: 400,
       tableData: [],
       pageObj: {
-        page: 0,
+        page: 1,
         size: 10,
       },
       total: 0,
     });
     // 搜索
     const doSimpleQuery = () => {
-      data.pageObj.page = 0;
+      data.pageObj.page = 1;
       getData();
     };
     const getData = () => {

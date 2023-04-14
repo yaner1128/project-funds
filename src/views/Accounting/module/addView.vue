@@ -62,8 +62,6 @@ import {
   nextTick,
   watch
 } from "vue";
-import { getProject } from "@/api/manage";
-import Pagination from "@/components/Pagination/index.vue";
 import { addDsLedger } from "@/api/bookkeeping";
 import { ElMessage } from "element-plus";
 import itemVue from "./item.vue";

@@ -108,7 +108,7 @@ export default defineComponent({
       },
       tableData: [],
       pageObj: {
-        page: 0,
+        page: 1,
         size: 10
       },
       total: 0
