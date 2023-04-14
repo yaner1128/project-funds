@@ -54,7 +54,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <Pagination :pageObj="pageObj" :total="total" @search="doSimpleQuery" />
+    <Pagination :pageObj="pageObj" :total="total" @search="getData" />
     <el-dialog
       :close-on-click-modal="false"
       :append-to-body="true"
@@ -156,13 +156,17 @@ export default defineComponent({
         ]
       },
       pageObj: {
-        page: 0,
+        page: 1,
         size: 10
       },
       tableData: [],
       total: 0,
     });
     const doSimpleQuery = () => {
+      data.pageObj.page = 1;
+      getData();
+    };
+    const getData = () => {
       const params = Object.assign({
         currentPageIndex: data.pageObj.page,
         pageSize: data.pageObj.size
@@ -171,7 +175,7 @@ export default defineComponent({
         data.tableData = res.data.records;
         data.total = Number(res.data.total);
       });
-    };
+    }
     const getTreeData = () => {
       getProjectEleUnionTree().then((res) => {
         data.treeData = [{
@@ -257,7 +261,8 @@ export default defineComponent({
       deleteClick,
       resetForm,
       submitClick,
-      changeMethods
+      changeMethods,
+      getData
     };
   },
 });

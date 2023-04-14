@@ -1,7 +1,7 @@
 <template>
   <div class="paginationBox">
     <el-pagination
-      :current-page="pageObj.page + 1"
+      :current-page="pageObj.page"
       v-model:page-size="pageObj.size"
       :page-sizes="[10, 20, 50, 100]"
       layout="total, sizes, prev, pager, next"
@@ -21,7 +21,7 @@ export default defineComponent({
     pageObj: {
       type: Object,
       default: {
-        page: 0,
+        page: 1,
         size: 10
       }
     },
@@ -41,7 +41,7 @@ export default defineComponent({
     };
 
     const handleCurrentChange = (val: any) => {
-      props.pageObj.page = val - 1;
+      props.pageObj.page = val;
       ctx.emit('search')
     };
 

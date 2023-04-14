@@ -98,3 +98,28 @@ export function dsAllocationRequesAdd(data: any) {
     data
   })
 }
+
+// 获取专户付款申请分页
+export function getDsAllocationReques(params: any) {
+  return request({
+    url: '/ds-cz-datacenter-special-funds/dsAllocationReques/page',
+    method: 'post',
+    params
+  })
+}
+// 编辑
+export function updateDsAllocationReques(data: any) {
+  return request({
+    url: '/ds-cz-datacenter-special-funds/dsAllocationReques/update',
+    method: 'post',
+    data
+  })
+}
+// 删除
+export function deleteDsAllocationReques(params: any) {
+  return request({
+    url: '/ds-cz-datacenter-special-funds/dsAllocationReques/delete',
+    method: 'post',
+    params
+  })
+}
