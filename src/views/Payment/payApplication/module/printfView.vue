@@ -28,11 +28,7 @@
           </div>
           <div>
             <span>申请书编号：</span>
-            <span style="color: #1890ff"></span>
-          </div>
-          <div>
-            <span>拨款书编号：</span>
-            <span style="color: #1890ff"></span>
+            <span style="color: #1890ff">{{ listData.allocationCode }}</span>
           </div>
         </div>
         <table
@@ -45,7 +41,7 @@
           <tr>
             <td class="column" colspan="3">对应归口股市：</td>
             <td class="value" colspan="3">
-              {{ mofDepCode }} {{ listData.mofDepName[0].mofDepName }}
+              {{ listData.mofDepName[0].codeName }}
             </td>
             <td class="value" colspan="6"></td>
           </tr>
@@ -124,10 +120,10 @@
             <span>审核人：</span>
             <span style="color: #1890ff"></span>
           </div>
-          <div>
+          <!-- <div>
             <span>记账标志：</span>
             <span style="color: #1890ff"></span>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -196,6 +192,7 @@ export default defineComponent({
       console.log("11", row);
       console.log("22", user);
       data.listData = row;
+      console.log('********', row)
       data.user = user;
       data.dateTime = dateTime;
       data.mofDepCode = mofDepCode;

@@ -148,6 +148,16 @@ export default defineComponent({
     selectCollection
   },
   setup() {
+    const checkAmount = (rule: any, value: any, callback: any) => {
+      if (data.payAmountMax) {
+        if(data.payAmountMax < value) {
+          callback(new Error('当前申请金额不能大于拨款账户余额' + data.payAmountMax))
+        }
+        callback()
+      } else {
+        callback()
+      }
+    }
     const router = useRouter();
     const store = useStore();
     const infoRef = ref();
@@ -156,6 +166,7 @@ export default defineComponent({
     const selectCollectionRef = ref();
     const data = reactive({
       dateTime: formatDate(new Date(), "yyyy-MM-dd hh:mm:ss"),
+      payAmountMax: <any>null,
       user: {
         agencyName: store.state.user.user.username,
       },
@@ -180,7 +191,7 @@ export default defineComponent({
         collection: [{ required: true, message: "必填", trigger: "blur" }],
         remark: [{ required: true, message: "必填", trigger: "blur" }],
         purpose: [{ required: true, message: "必填", trigger: "blur" }],
-        money: [{ required: true, message: "必填", trigger: "blur" }],
+        money: [{ required: true, message: "必填", trigger: "blur" },{ validator: checkAmount, trigger: 'blur' }],
       },
       mofDepData: [],
       accountData: [],
@@ -254,7 +265,8 @@ export default defineComponent({
     }
     // 获取拨款账号
     const getSelected = (val: any) => {
-      console.log('当前勾选的账号', val);
+      console.log('当前勾选的账号', val.amounts);
+      data.payAmountMax = val.amounts;
       data.infoForm.bankName = val.bankName;
       data.infoForm.accountName = val.accountName;
       data.infoForm.accountCode = val.accountCode;
@@ -281,7 +293,6 @@ export default defineComponent({
           printViewRef.value.open(data.infoForm, data.user, data.dateTime, data.mofDepCode);
         }
       })
-      
     }
 
     // 获取下拉数据

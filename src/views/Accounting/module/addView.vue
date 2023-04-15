@@ -19,13 +19,23 @@
           style="width: 200px"
           readonly
         />
+        付款申请：
+        <el-input
+          v-model="allocationCode"
+          placeholder="请选择付款申请"
+          @click="selectPayClick"
+          style="width: 200px"
+          readonly
+        />
       </div>
       <selectAccountSet ref="selectAccountSetRef" @selected="getAccount" />
+      <!-- 付款申请 -->
+      <selectPayVue ref="selectPayRef" @selected="getPayItem" />
       <div class="payBox">
         <div class="left">
           <div class="title">借方</div>
           <div class="pay_container">
-            <itemVue ref="itemVueRef1" :disabled="!accountSetCode" :curData="sendData" :treeData="treeData1" @putData="getDebitData" />
+            <itemVue ref="itemVueRef1" :isPay="true" :disabled="!accountSetCode || !allocationCode" :curData="sendData" :treeData="treeData1" @putData="getDebitData" />
           </div>
         </div>
         <div class="right">
@@ -33,7 +43,7 @@
           <div class="pay_container">
             <el-scrollbar class="scrollbar">
               <template v-for="key in creditData" :key="key">
-                <itemVue ref="itemVueRef2" :disabled="!accountSetCode" :curData="key" :treeData="treeData2" @putData="getCreditData" />
+                <itemVue ref="itemVueRef2" :disabled="!accountSetCode || !allocationCode" :curData="key" :treeData="treeData2" @putData="getCreditData" />
               </template>
               <span v-if="accountSetCode" class="insertIcon" @click="insertClick"
                 ><el-icon><CirclePlus /></el-icon
@@ -67,16 +77,19 @@ import { ElMessage } from "element-plus";
 import itemVue from "./item.vue";
 import { CirclePlus } from "@element-plus/icons-vue";
 import selectAccountSet from './selectAccountSet.vue';
+import selectPayVue from './selectPay.vue'
 import { simpleAccountingSubject } from "@/api/dsAccountSets";
 import { useStore } from "vuex";
 import { formatDate } from "@/utils/date";
+import { updateDsAllocationReques } from "@/api/dsAccounts";
 
 export default defineComponent({
   name: "addView",
   components: {
     itemVue,
     CirclePlus,
-    selectAccountSet
+    selectAccountSet,
+    selectPayVue
   },
   setup(props, { emit }) {
     const store = useStore();
@@ -86,12 +99,15 @@ export default defineComponent({
       maxHeight: 400,
       accountSetCode: "",
       accountSetName: "",
+      allocationCode: "",
       creditData: [{}],
-      sendData: {},
+      sendData: <any>{
+        amount: '',
+      },
       treeData1: [],
       treeData2: [],
       curCreditData: <any>{},
-      debitData: <any>{}
+      debitData: <any>{},
     });
     // 打开弹窗
     const open = () => {
@@ -100,6 +116,16 @@ export default defineComponent({
       data.dialogFormVisible = true;
       autoHeight();
     };
+    // 勾选付款申请
+    const selectPayRef = ref();
+    const selectPayClick = () => {
+      selectPayRef.value.open();
+    }
+    const getPayItem = (val: any) => {
+      console.log('当前勾选的付款申请', val)
+      data.sendData.amount = val.amount;
+      data.allocationCode = val.allocationCode;
+    }
 
     // 勾选账套
     const selectAccountSetRef = ref();
@@ -122,7 +148,13 @@ export default defineComponent({
     }
     const clearItem = () => {
       // 借方数据清除
-      itemVueRef1.value.clear();
+      if(!data.allocationCode) {
+        itemVueRef1.value.clear();
+        data.sendData = {};
+      }
+      data.sendData = {
+        amount: data.sendData.amount
+      };
       // 贷方数据清除
       for(var i=0; i<itemVueRef2.value.length; i++) {
         itemVueRef2.value[i].clear()
@@ -139,6 +171,7 @@ export default defineComponent({
       data.sendData = {};
       data.accountSetCode = "";
       data.accountSetName = "";
+      data.allocationCode = "";
       data.treeData1 = []
       data.treeData2 = []
       data.dialogFormVisible = false;
@@ -174,13 +207,19 @@ export default defineComponent({
           temp.push(Object.assign({
             accountSetCode: data.accountSetCode,
             mofDivCode: data.user.mofDivCode,
-            ledgerTime: ledgerTime
+            ledgerTime: ledgerTime,
+            allocationCode: data.allocationCode
           }, allData[key]))
         }
         console.log(temp)
         addDsLedger(temp).then((res: any) => {
           if(res.code === 200) {
             ElMessage.success('新增成功!')
+            // 修改付款申请状态
+            updateDsAllocationReques({
+              allocationCode: data.allocationCode,
+              isAccounting: 1
+            })
             resetForm();
             emit('reload')
             return
@@ -196,12 +235,14 @@ export default defineComponent({
       for(var k in data.debitData) {
         borrow_value += Number(data.debitData[k].amount);
       }
+      
       // 获取贷方金额合计
       let credit_value = 0;
       for(var k in data.curCreditData) {
         credit_value += Number(data.curCreditData[k].amount);
       }
-
+      console.log('借', borrow_value)
+      console.log('贷', credit_value)
       if(borrow_value===credit_value) {
         return true;
       }
@@ -254,7 +295,10 @@ export default defineComponent({
       selectClick,
       getAccount,
       getCreditData,
-      getDebitData
+      getDebitData,
+      selectPayClick,
+      selectPayRef,
+      getPayItem
     };
   },
 });

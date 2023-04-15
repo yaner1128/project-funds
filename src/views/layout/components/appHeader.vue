@@ -7,10 +7,7 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container right-menu-item" trigger="click" placement="bottom-end">
         <div class="username">
-          <span v-if="checkPermission(['PRJ_GK_ROLE'])">国库股-{{ user.username }}</span>
-          <span v-else-if="checkPermission(['PRJ_DEPT_ROLE'])">{{ mofDivInfo.mofDepName }}-{{ user.username }}</span>
-          <span v-else-if="checkPermission(['PRJ_AGENCY_ROLE'])">{{ agencyInfo.agencyName }}-{{ user.username }}</span>
-          <span v-else>{{ user.username }}</span>
+          <span>{{ user.username }}</span>
           <el-icon><CaretBottom /></el-icon>
         </div>
         <template #dropdown>
@@ -56,20 +53,14 @@ export default defineComponent({
     const data = reactive({
       webName: config.webName,
       user: store.state.user.user,
-      device: store.state.app.device,
-      agencyInfo: store.state.user.agencyInfo,
-      mofDivInfo: store.state.user.mofDivInfo,
+      device: store.state.app.device
     })
 
     nextTick(() => {
       data.user = store.state.user.user;
-      data.agencyInfo = store.state.user.agencyInfo;
-      data.mofDivInfo = store.state.user.mofDivInfo;
     })
     watch(() => store.state.user, (val) => {
-      data.agencyInfo = val.agencyInfo;
       data.user = val.user;
-      data.mofDivInfo = val.mofDivInfo;
     }, { immediate: true })
 
     const loginOutClick = () => {

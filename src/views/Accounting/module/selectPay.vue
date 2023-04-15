@@ -6,7 +6,7 @@
     v-model="dialogFormVisible"
     :lock-scroll="true"
     width="1000px"
-    title="选择拨款账户"
+    title="选择付款申请"
     :before-close="resetForm"
   >
     <div class="dialog_container">
@@ -22,13 +22,17 @@
             <vxe-button type="text" @click="clearRadioRowEvent" :disabled="!selectRow">取消</vxe-button>
           </template>
         </vxe-column>
-        <vxe-column title="开户行名称" field="bankName"></vxe-column>
-        <vxe-column title="账号名称" field="accountName"></vxe-column>
-        <vxe-column title="账号" field="accountCode"></vxe-column>
-        <vxe-column title="账户余额(单位：元)" field="amounts"></vxe-column>
+        <vxe-column title="单号" field="allocationCode"></vxe-column>
+        <vxe-column title="申请股室名" field="allocationMofName"></vxe-column>
+        <vxe-column title="所属项目" field="prjName"></vxe-column>
+        <vxe-column title="拨款账户" field="outAccountName"></vxe-column>
+        <vxe-column title="收款账户" field="inAccountName"></vxe-column>
+        <vxe-column title="金额" field="amount"></vxe-column>
+        <vxe-column title="摘要" field="remark"></vxe-column>
+        <vxe-column title="用途" field="userpurposerapplication"></vxe-column>
       </vxe-table>
       <!-- 分页 -->
-      <Pagination :pageObj="pageObj" :total="total" @search="doSimpleQuery" />
+      <Pagination :pageObj="pageObj" :total="total" @search="getData" />
     </div>
     <template #footer>
       <div style="text-align: right">
@@ -42,17 +46,20 @@
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref, toRefs, nextTick } from "vue";
 import Pagination from "@/components/Pagination/index.vue";
-import { addAccountSets } from "@/api/dsAccountSets";
-import { getDsAccountsPage } from "@/api/dsAccounts";
+import { getAccountSets } from "@/api/dsAccountSets";
 import { ElMessage } from "element-plus";
+import { useStore } from 'vuex';
+import { getDsAllocationReques } from "@/api/dsAccounts";
 
 export default defineComponent({
-  name: "selectApprove",
+  name: "selectPay",
   components: {
     Pagination,
   },
   setup(props, { emit }) {
+    const store = useStore();
     const data = reactive({
+      mofDepCode: store.state.user.user.mofDepCode,
       dialogFormVisible: false,
       selectRow: null,
       maxHeight: 400,
@@ -85,12 +92,15 @@ export default defineComponent({
     }
     const getData = () => {
       // 账户
-      getDsAccountsPage({
+      const params = {
         currentPageIndex: data.pageObj.page,
-        pageSize: data.pageObj.size
-      }, { status: 1 }).then((res: any) => {
+        pageSize: data.pageObj.size,
+        allocationMofCode: data.mofDepCode,
+        isAccounting: 0
+      };
+      getDsAllocationReques(params).then((res: any) => {
         data.tableData = res.data.records;
-        data.total = Number(res.data.total)
+        data.total = Number(res.data.total);
       })
     }
     // 关闭
@@ -98,11 +108,9 @@ export default defineComponent({
       data.dialogFormVisible = false;
     };
     // 确认提交
-    const submitClick = async () => {
-      if (data.selectRow) { 
-        emit('selected', data.selectRow);
-        data.dialogFormVisible = false;
-      }
+    const submitClick = async() => {
+      emit('selected', data.selectRow);
+      data.dialogFormVisible = false;
     };
 
     // 设置高度
@@ -129,7 +137,8 @@ export default defineComponent({
       submitClick,
       radioChangeEvent,
       clearRadioRowEvent,
-      doSimpleQuery
+      doSimpleQuery,
+      getData
     };
   },
 });

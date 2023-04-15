@@ -11,10 +11,21 @@
           readonly
           :disabled="disabled"
         />
+        付款申请：
+        <el-input
+          v-model="allocationCode"
+          placeholder="请选择付款申请"
+          @click="selectPayClick"
+          style="width: 200px"
+          readonly
+          :disabled="disabled"
+        />
       </div>
       <span>凭证号：{{ certificateNumber }}</span>
     </div>
     <selectAccountSet ref="selectAccountSetRef" @selected="getAccount" />
+    <!-- 付款申请 -->
+      <selectPayVue ref="selectPayRef" @selected="getPayItem" />
     <div class="payBox">
       <div class="left">
         <div class="title">借方</div>
@@ -22,9 +33,10 @@
           <itemVue
             ref="itemVueRef1"
             :curData ="sendData"
-            :disabled="!accountSetCode || disabled"
+            :disabled="!accountSetCode || !allocationCode || disabled"
             :treeData="treeData1"
             @putData="getDebitData"
+            :isPay="true"
           />
         </div>
       </div>
@@ -36,7 +48,7 @@
               <itemVue
                 ref="itemVueRef2"
                 :curData="item"
-                :disabled="!accountSetCode || disabled"
+                :disabled="!accountSetCode || !allocationCode || disabled"
                 :treeData="treeData2"
                 @putData="getCreditData"
               />
@@ -54,6 +66,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref, toRefs, watch } from "vue";
 import selectAccountSet from './selectAccountSet.vue';
+import selectPayVue from './selectPay.vue'
 import { CirclePlus } from "@element-plus/icons-vue";
 import itemVue from "./item.vue";
 import { simpleAccountingSubject } from "@/api/dsAccountSets";
@@ -66,7 +79,8 @@ export default defineComponent({
   components: {
     selectAccountSet,
     CirclePlus,
-    itemVue
+    itemVue,
+    selectPayVue
   },
   props: {
     detailData: {
@@ -85,12 +99,15 @@ export default defineComponent({
       certificateNumber: null,
       accountSetName: '',
       accountSetCode: '',
+      allocationCode: "",
       treeData1: [],
       treeData2: [],
       curCreditData: <any>{},
       debitData: <any>{},
       creditData: <any>[],
-      sendData: {},
+      sendData: <any>{
+        amount: ''
+      },
     });
 
     watch(() => props.detailData, (val: any) => {
@@ -98,6 +115,7 @@ export default defineComponent({
         data.accountSetCode = val.accountSetCode;
         data.accountSetName = val.accountSetName;
         data.certificateNumber = val.certificateNumber;
+        data.allocationCode = val.allocationCode;
 
         const tempData = val.data;
         data.creditData = tempData.filter((item: any) => {
@@ -122,6 +140,16 @@ export default defineComponent({
       }
     }, { immediate: true })
 
+    // 勾选付款申请
+    const selectPayRef = ref();
+    const selectPayClick = () => {
+      selectPayRef.value.open();
+    }
+    const getPayItem = (val: any) => {
+      console.log('当前勾选的付款申请', val)
+      data.sendData.amount = val.amount;
+      data.allocationCode = val.allocationCode;
+    }
     // 勾选账套
     const selectAccountSetRef = ref();
     const selectClick = () => {
@@ -149,8 +177,14 @@ export default defineComponent({
 
     const clearItem = () => {
       // 借方数据清除
-      itemVueRef1.value.clear();
-      data.sendData = {};
+      if(!data.allocationCode) {
+        itemVueRef1.value.clear();
+        data.sendData = {};
+      }
+      data.sendData = {
+        amount: data.sendData.amount
+      };
+      
       // 贷方数据清除
       data.creditData = [{}]
       for(var i=0; i<itemVueRef2.value.length; i++) {
@@ -198,6 +232,7 @@ export default defineComponent({
             isEqual: 't',
             accountSetCode: data.accountSetCode,
             mofDivCode: data.user.mofDivCode,
+            allocationCode: data.allocationCode,
             isDeleted: 0,
           },
           data: Object.assign(data.debitData,data.curCreditData)
@@ -236,7 +271,10 @@ export default defineComponent({
       getCreditData,
       getAccount,
       insertClick,
-      checkValid
+      checkValid,
+      selectPayRef,
+      selectPayClick,
+      getPayItem
     };
   },
 });

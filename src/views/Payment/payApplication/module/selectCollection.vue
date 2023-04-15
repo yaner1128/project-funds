@@ -90,7 +90,7 @@ export default defineComponent({
       getDsAccountsPage({
         currentPageIndex: data.pageObj.page,
         pageSize: data.pageObj.size
-      }, {noEqAccountCode: data.noEqAccountCode}).then((res: any) => {
+      }, {noEqAccountCode: data.noEqAccountCode, status: 1}).then((res: any) => {
         data.tableData = res.data.records;
         data.total = Number(res.data.total)
       })

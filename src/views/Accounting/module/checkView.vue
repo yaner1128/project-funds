@@ -29,6 +29,7 @@ import { getDsLedgerDetail, updateDsLedger } from "@/api/bookkeeping";
 import { ElMessage } from "element-plus";
 import rejectView from '@/components/rejectView/index.vue';
 import detailsVue from "./commonDetails.vue";
+import { updateDsAllocationReques } from "@/api/dsAccounts";
 
 export default defineComponent({
   name: "addView",
@@ -79,6 +80,11 @@ export default defineComponent({
           if(res.code === 200) {
             ElMessage.success('审核完成！');
             data.dialogFormVisible = false;
+            // 修改付款申请状态
+            updateDsAllocationReques({
+              allocationCode: data.detailData.allocationCode,
+              isAccounting: 2
+            })
             emit('reload')
             return;
           }
@@ -104,6 +110,11 @@ export default defineComponent({
           ElMessage.success('审核完成！');
           data.dialogFormVisible = false;
           emit('reload')
+          // 修改付款申请状态
+          updateDsAllocationReques({
+            allocationCode: data.detailData.allocationCode,
+            isAccounting: 3
+          })
           return;
         }
         ElMessage.error(res.message);

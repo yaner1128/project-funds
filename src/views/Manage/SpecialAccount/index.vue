@@ -19,7 +19,7 @@
         搜索
       </el-button>
     </div>
-    <el-button type="primary" class="tableBtn" @click="addClick">
+    <el-button v-permission="['CASHIER']" type="primary" class="tableBtn" @click="addClick">
       <el-icon class="el-icon--left"><Plus /></el-icon>
       添加专户
     </el-button>
@@ -44,23 +44,28 @@
           >
         </template>
       </el-table-column>
-      <el-table-column label="操作" fixed="right" width="220">
+      <el-table-column label="操作" fixed="right" width="120">
         <template #default="{ row }">
-          <el-button v-if="row.status !== -1" link type="primary" class="tableBtn" @click="editAmount(row.accountCode)">
+          <el-button v-permission="['CASHIER']" style="margin-left: 8px" :disabled="row.status != 1" link type="primary" @click="editAmount(row.accountCode)">
             <el-icon class="el-icon--left"><Ticket /></el-icon>余额修正
           </el-button>
-          <el-button link type="primary" class="tableBtn" @click="reportClick(row.accountCode)">
+          <el-button v-permission="['CASHIER']" style="margin-left: 8px" link type="primary" @click="editStatus(row.accountCode, row.status)">
+            <el-icon class="el-icon--left"><EditPen /></el-icon>修改状态
+          </el-button>
+          <el-button v-permission="['CASHIER']" style="margin-left: 8px" link type="primary" @click="reportClick(row.accountCode)">
             <el-icon class="el-icon--left"><Document /></el-icon>查看报表
           </el-button>
         </template>
       </el-table-column>
     </el-table>
     <!-- 分页 -->
-    <Pagination :pageObj="pageObj" :total="total" @search="doSimpleQuery" />
+    <Pagination :pageObj="pageObj" :total="total" @search="getData" />
     <!-- 新增专户 -->
     <addView ref="addViewRef" @reload="doSimpleQuery" />
     <!-- 余额修正 -->
-    <editAmount ref="editAmountRef"  @reload="doSimpleQuery" />
+    <editAmount ref="editAmountRef"  @reload="getData" />
+    <!-- 修改状态 -->
+    <editStatusVue ref="editStatusRef" @reload="getData" />
     <!-- 报表 -->
     <reportViewVue ref="reportViewRef" />
   </div>
@@ -74,6 +79,7 @@ import { Ticket, Document } from '@element-plus/icons-vue';
 import editAmount from './module/editAmount.vue';
 import { getDsAccountsPage, getAccountsStatus } from "@/api/dsAccounts";
 import reportViewVue from "./module/reportView.vue";
+import editStatusVue from "./module/editStatus.vue";
 
 export default defineComponent({
   name: "SpecialAccount",
@@ -81,6 +87,7 @@ export default defineComponent({
     Pagination,
     addView,
     editAmount,
+    editStatusVue,
     Ticket,
     Document,
     reportViewVue
@@ -104,6 +111,10 @@ export default defineComponent({
     });
     // 查询
     const doSimpleQuery = () => {
+      data.pageObj.page = 1;
+      getData()
+    }
+    const getData = () => {
       getDsAccountsPage({
         currentPageIndex: data.pageObj.page,
         pageSize: data.pageObj.size
@@ -121,6 +132,11 @@ export default defineComponent({
     const editAmountRef = ref();
     const editAmount = (accountCode: any) => {
       editAmountRef.value.open(accountCode);
+    }
+    // 修改状态
+    const editStatusRef = ref();
+    const editStatus = (accountCode: any, status: any) => {
+      editStatusRef.value.open(accountCode, status);
     }
     // 查看报表
     const reportViewRef = ref();
@@ -169,7 +185,10 @@ export default defineComponent({
       doSimpleQuery,
       addClick,
       reportClick,
-      editAmount
+      editAmount,
+      editStatusRef,
+      editStatus,
+      getData
     };
   },
 });

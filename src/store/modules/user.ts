@@ -8,6 +8,7 @@ const user = {
     roles: [],
     // 第一次加载菜单时用到
     loadMenus: false,
+    mofDepCode: null,
     mofDivInfo: [],
     agencyInfo: []
   },
@@ -25,7 +26,7 @@ const user = {
     SET_LOAD_MENUS: (state: { loadMenus: any }, loadMenus: any) => {
       state.loadMenus = loadMenus
     },
-    SET_MOF_DIV_INFO: (state: {
+    SET_MOF_DEP_CODE: (state: {
       mofDivInfo: any; user: any
     }, mofDivInfo: any) => {
       state.mofDivInfo = mofDivInfo
@@ -72,7 +73,7 @@ const user = {
       return new Promise((resolve, reject) => {
         getInfo().then((res: any) => {
           setUserInfo(res.data, commit)
-          getUserInfo(commit)
+          getUserInfo(res.data, commit)
           resolve(res)
         }).catch((error: any) => {
           reject(error)
@@ -133,8 +134,8 @@ export const setUserInfo = (res: any, commit: any) => {
   commit('SET_USER', res)
 }
 
-export const getUserInfo = (commit: any) => {
-
+export const getUserInfo = (res: any, commit: any) => {
+  commit('SET_MOF_DEP_CODE', res.mofDepCode)
 }
 
 export default user

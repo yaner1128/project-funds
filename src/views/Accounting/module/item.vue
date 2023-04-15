@@ -16,6 +16,7 @@
           v-model="formInline.amount"
           :controls="false"
           placeholder="请输入金额"
+          :disabled="isPay"
         />
       </el-form-item>
     </el-form>
@@ -39,6 +40,10 @@ export default defineComponent({
     curData: {
       type: Object,
       default: {}
+    },
+    isPay: {
+      type: Boolean,
+      default: false
     }
   },
   setup(props, { emit }) {

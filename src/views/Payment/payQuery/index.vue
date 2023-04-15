@@ -6,7 +6,7 @@
         搜索
       </el-button>
     </div>
-    <el-button type="primary" class="tableBtn" @click="addClick">
+    <el-button type="primary" v-permission="['CASHIER']" class="tableBtn" @click="addClick">
       <el-icon class="el-icon--left"><Plus /></el-icon>
       新增付款申请
     </el-button>
@@ -23,31 +23,24 @@
       @cell-dblclick="detailView"
     >
       <el-table-column prop="allocationCode" label="单号" min-width="200px" />
-      <el-table-column prop="allocationMofName" label="申请股室名" width="150" />
+      <el-table-column prop="allocationMofName" label="申请股室名" width="180" />
       <el-table-column prop="prjName" label="所属项目" width="150" />
-      <el-table-column prop="outAccountName" label="拨款账户" width="150" />
-      <el-table-column prop="inAccountName" label="收款账户" width="150" />
+      <el-table-column prop="outAccountName" label="拨款账户" width="200" />
+      <el-table-column prop="inAccountName" label="收款账户" width="200" />
       <el-table-column prop="amount" label="金额" width="120" />
       <el-table-column prop="remark" label="摘要" width="150" show-overflow-tooltip />
       <el-table-column prop="userpurposerapplication" label="用途" width="150" show-overflow-tooltip />
-       <el-table-column prop="isValid" label="审核状态" width="120">
+      <el-table-column prop="isAccounting" label="是否已记账审核" width="140">
         <template #default="{ row }">
-          <el-tag :type="row.isValid == 2 ? 'danger' : row.isValid == 1 ? 'success' : ''" effect="dark" >
-            {{ row.isValid == 2 ? '已拒绝' : row.isValid == 1 ? '已复核' : '待复核' }}
-          </el-tag>
+          {{ statusObj[row.isAccounting] }}
         </template>
       </el-table-column>
-      <el-table-column prop="validTime" label="签字通过时间" width="160" />
-      <el-table-column prop="rejectIllustrate" label="拒绝理由" width="150" show-overflow-tooltip />
-      <el-table-column label="操作" fixed="right" width="280">
+      <el-table-column label="操作" fixed="right" width="240">
         <template #default="{ row }">
-          <el-button link type="primary" :disabled="row.isValid != 0" @click="checkClick(row.allocationCode)">
-            <el-icon class="el-icon--left"><Coordinate /></el-icon>审核
-          </el-button>
           <el-button link type="primary" @click="printClick(row.allocationCode)">
             <el-icon class="el-icon--left"><Postcard /></el-icon>打印
           </el-button>
-          <el-button link type="primary" :disabled="row.isValid == 1" @click="editClick(row.allocationCode)">
+          <el-button link type="primary" v-permission="['CASHIER']" :disabled="row.isAccounting != 0" @click="editClick(row.allocationCode)">
             <el-icon class="el-icon--left"><EditPen /></el-icon>编辑
           </el-button>
           <el-popconfirm
@@ -57,7 +50,7 @@
             @confirm="deleteClick(row.allocationCode)"
           >
             <template #reference>
-              <el-button type="primary" link>
+              <el-button v-permission="['CASHIER']" type="primary" link>
                 <el-icon><Delete /></el-icon>删除
               </el-button>
             </template>
@@ -85,7 +78,8 @@ import { useRouter } from "vue-router";
 import editViewVue from "./module/editView.vue";
 import { ElMessage } from "element-plus";
 import checkPageVue from "./module/checkPage.vue";
-import printfViewVue from "./module/printfView.vue"
+import printfViewVue from "./module/printfView.vue";
+import { useStore } from 'vuex';
 
 export default defineComponent({
   name: "payQuery",
@@ -98,10 +92,12 @@ export default defineComponent({
     printfViewVue
   },
   setup() {
+    const store = useStore();
     const router = useRouter();
     const editViewRef = ref();
     const data = reactive({
       maxHeight: 500,
+      mofDepCode: store.state.user.user.mofDepCode,
       query: {
         year: '',
         accountSetName: ''
@@ -111,7 +107,13 @@ export default defineComponent({
         page: 1,
         size: 10
       },
-      total: 0
+      total: 0,
+      statusObj: {
+        '0': '未记账', 
+        '1': '已记账未审核', 
+        '2': '已记账已拒绝', 
+        '3': '已记账已审核', 
+      }
     });
     // 查询
     const doSimpleQuery = () => {
@@ -121,7 +123,8 @@ export default defineComponent({
     const getData = () => {
       const params = Object.assign({
         currentPageIndex: data.pageObj.page,
-        pageSize: data.pageObj.size
+        pageSize: data.pageObj.size,
+        allocationMofCode: data.mofDepCode,
       }, data.query)
       getDsAllocationReques(params).then((res: any) => {
         data.tableData = res.data.records;

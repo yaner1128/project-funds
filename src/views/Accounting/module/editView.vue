@@ -24,6 +24,7 @@
 import { defineComponent, onMounted, reactive, ref, toRefs } from "vue";
 import { ElMessage } from "element-plus";
 import detailsVue from "./commonDetails.vue";
+import { updateDsAllocationReques } from "@/api/dsAccounts";
 import { getDsLedgerDetail, updateDsLedger } from "@/api/bookkeeping";
 
 export default defineComponent({
@@ -36,10 +37,12 @@ export default defineComponent({
     const data = reactive({
       dialogFormVisible: false,
       certificateNumber: null,
-      detailData: {},
+      oldAllocationCode: <any>null,
+      detailData: <any>{},
     });
     // 打开弹窗
     const open = (certificateNumber: any) => {
+      debugger
       data.certificateNumber = certificateNumber;
       getDsLedgerDetail({ certificateNumber: certificateNumber }).then((res: any) => {
         if(Array.isArray(res.data) && res.data.length>0) {
@@ -47,7 +50,7 @@ export default defineComponent({
             ...res.data[0],
             data: res.data
           };
-          
+          data.oldAllocationCode = data.detailData.allocationCode;
         }
         data.dialogFormVisible = true;
       })
@@ -57,6 +60,7 @@ export default defineComponent({
       await detailsVueRef.value.checkValid();
     }
     const getData = (val: any) => {
+      debugger
       const tempData = val.data;
       let params = <any>[];
       for(var key in tempData) {
@@ -67,11 +71,23 @@ export default defineComponent({
           amount: tempData[key].amount
         })
       }
-      console.log(params)
+      console.log('***', data.oldAllocationCode)
       updateDsLedger(params).then((res: any) => {
         if(res.code === 200) {
           ElMessage.success('编辑成功');
           data.dialogFormVisible = false;
+          // 修改付款申请状态
+          updateDsAllocationReques({
+            allocationCode: val.common.allocationCode,
+            isAccounting: 1
+          })
+          
+          if(data.oldAllocationCode !== val.common.allocationCode) {
+            updateDsAllocationReques({
+              allocationCode: data.oldAllocationCode,
+              isAccounting: 0
+            })
+          }
           emit('reload')
           return;
         }

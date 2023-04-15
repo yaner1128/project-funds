@@ -9,7 +9,7 @@
     title="会计科目"
     :before-close="resetForm"
   >
-    <el-button @click="addAccount" type="primary">新增</el-button>
+    <el-button v-permission="['ACCOUNTANT']" @click="addAccount" type="primary">新增</el-button>
     <vxe-table
       border
       ref="xTree"

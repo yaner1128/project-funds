@@ -21,10 +21,10 @@
           <span>申请书编号：</span>
           <span style="color: #1890ff">{{ detailsData.allocationCode }}</span>
         </div>
-        <div>
+        <!-- <div>
           <span>拨款书编号：</span>
           <span style="color: #1890ff"></span>
-        </div>
+        </div> -->
       </div>
       <table
         style="width: 100%"
@@ -110,10 +110,10 @@
           <span>审核人：</span>
           <span style="color: #1890ff">{{ detailsData.isValid != '0' ? detailsData.updateName : ""}}</span>
         </div>
-        <div>
+        <!-- <div>
           <span>记账标志：</span>
           <span style="color: #1890ff"></span>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>

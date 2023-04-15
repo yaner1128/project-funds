@@ -7,7 +7,7 @@
         搜索
       </el-button>
     </div>
-    <el-button type="primary" class="tableBtn" @click="addClick">
+    <el-button v-permission="['ACCOUNTANT']" type="primary" class="tableBtn" @click="addClick">
       <el-icon class="el-icon--left"><Plus /></el-icon>
       添加账套
     </el-button>
