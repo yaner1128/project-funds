@@ -48,15 +48,6 @@ export function specialFundsEleUnionTree(params: any) {
   })
 }
 
-// 获取股室数据
-export function basMofDepTree(params: any) {
-  return request({
-    url: '/ds-cz-datacenter-user/basMofDep/tree',
-    method: 'get',
-    params
-  })
-}
-
 // 获取专户
 export function getAccountsStatus() {
   return request({

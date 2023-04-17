@@ -19,7 +19,8 @@
           <el-tree-select v-model="addForm.bank" :data="optionData" :props="{children: 'children',label: 'codeName', value: 'code'}" :render-after-expand="false" placeholder="请选择开户银行" />
         </el-form-item>
         <el-form-item label="账号：" prop="accountCode">
-          <el-input v-model="addForm.accountCode" placeholder="请输入账号" />
+          <!-- <el-input v-model="addForm.accountCode" placeholder="请输入账号" /> -->
+          <el-input-number v-model="addForm.accountCode" :controls="false" placeholder="请输入账号"  />
         </el-form-item>
         <el-form-item label="账号名称：" prop="accountName">
           <el-input v-model="addForm.accountName" placeholder="请输入账号名称" />
@@ -38,7 +39,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="归属股室：" prop="mofDepCode">
-          <el-tree-select v-model="addForm.mofDepCode" :data="mofDepData" :props="{children: 'children',label: 'mofDepName', value: 'mofDepCode'}" :render-after-expand="false" placeholder="请选择归属股室" />
+          <el-tree-select v-model="addForm.mofDepCode" :data="mofDepData" :props="{children: 'children',label: 'codeName', value: 'code'}" :render-after-expand="false" placeholder="请选择归属股室" />
         </el-form-item>
       </el-form>
     </div>
@@ -54,8 +55,9 @@
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref, toRefs } from "vue";
 import Pagination from "@/components/Pagination/index.vue";
-import { specialFundsEleUnionTree, basMofDepTree, addDsAccounts, getAccountsStatus } from "@/api/dsAccounts";
+import { specialFundsEleUnionTree, addDsAccounts, getAccountsStatus } from "@/api/dsAccounts";
 import { ElMessage } from "element-plus";
+import { getProjectEleUnionTree } from "@/api/codeManage";
 
 export default defineComponent({
   name: "addView",
@@ -69,7 +71,7 @@ export default defineComponent({
       dialogFormVisible: false,
       addForm: {
         bank: '',
-        accountCode: '',
+        accountCode: null,
         accountName: '',
         amounts: null,
         status: '',
@@ -130,7 +132,7 @@ export default defineComponent({
         data.optionData = res.data;
       })
       // 股室
-      basMofDepTree({sourceId: 1}).then((res: any) => {
+      getProjectEleUnionTree({ type: 'MOF' }).then((res: any) => {
         data.mofDepData = res.data;
       })
       // 状态

@@ -156,7 +156,6 @@ import {
 } from "vue";
 import { formatDate } from "@/utils/date";
 import {
-  basMofDepTree,
   getMaxAllocationCode,
   dsAllocationDetail,
   updateDsAllocationReques
@@ -325,9 +324,6 @@ export default defineComponent({
     // 获取下拉数据
     const getCodeData = () => {
       // 股室
-      // basMofDepTree({sourceId: 1}).then((res: any) => {
-      //   data.mofDepData = res.data;
-      // })
       getProjectEleUnionTree({ type: "MOF" }).then((res: any) => {
         data.mofDepData = res.data;
       });

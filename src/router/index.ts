@@ -57,9 +57,9 @@ router.beforeEach((to: any, from: any, next: any) => {
       // 测试环境
       // window.location.href = 'http://192.168.1.7:3265/';
       // 正式环境
-      // window.location.href = window.location.origin
-      next(`/login`) // 否则全部重定向到登录页
-      // next()
+      window.location.href = window.location.origin
+      // next(`/login`) // 否则全部重定向到登录页
+      next()
       NProgress.done()
     }
   }

@@ -41,12 +41,3 @@ export function addDsMofProjects(data: any) {
   })
 }
 
-// 获取股室
-export function getBasMofDepTree(params?: any) {
-  return request({
-    url: '/ds-cz-datacenter-user/basMofDep/tree',
-    method: 'get',
-    params
-  })
-}
-

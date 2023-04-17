@@ -130,7 +130,7 @@ import {
 } from "vue";
 import { formatDate } from "@/utils/date";
 import printView from "./module/printfView.vue";
-import { basMofDepTree, getMaxAllocationCode, dsAllocationRequesAdd } from "@/api/dsAccounts";
+import { getMaxAllocationCode, dsAllocationRequesAdd } from "@/api/dsAccounts";
 import selectApproveVue from "./module/selectApprove.vue";
 import checkProjectView from "./module/checkProjectView.vue";
 import selectCollection from "./module/selectCollection.vue";
@@ -298,9 +298,6 @@ export default defineComponent({
     // 获取下拉数据
     const getCodeData = () => {
       // 股室
-      // basMofDepTree({sourceId: 1}).then((res: any) => {
-      //   data.mofDepData = res.data;
-      // })
       getProjectEleUnionTree({ type: 'MOF' }).then((res: any) => {
         data.mofDepData = res.data;
       })

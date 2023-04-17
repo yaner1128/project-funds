@@ -107,12 +107,12 @@
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref, toRefs, computed } from "vue";
 import {
-    getBasMofDepTree,
     addDsMofProjects,
     updateDsMofProjects,
     getDsMofProjects,
     deleteDsMofProjects
 } from "@/api/projectSet";
+import { getProjectEleUnionTree } from "@/api/codeManage";
 import { ElMessage } from "element-plus";
 import Pagination from "@/components/Pagination/index.vue";
   
@@ -137,8 +137,8 @@ export default defineComponent({
             },
             defaultProps: {
                 children: 'children',
-                label: 'mofDepName',
-                value: 'mofDepCode'
+                label: 'codeName',
+                value: 'code'
             },
             treeData: <any>[],
             rules: {
@@ -168,10 +168,9 @@ export default defineComponent({
         };
         //  获取股室树
         const getTreeData = () => {
-            getBasMofDepTree({sourceId:1}).then((res:any) => {
-                console.log(res)
-                data.treeData = res.data;
-            });
+          getProjectEleUnionTree({ type: "MOF" }).then((res: any) => {
+            data.treeData = res.data;
+          });
         }
     
         const toCreate = () => {
