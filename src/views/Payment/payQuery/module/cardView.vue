@@ -32,7 +32,7 @@
         align="center"
         valign="center"
       >
-        <tr>
+        <tr v-if="check2">
           <td class="column" colspan="3">对应归口股市：</td>
           <td class="value" colspan="3">
             {{ detailsData.allocationMofName }}
@@ -41,19 +41,19 @@
         </tr>
         <!-- 付款人 全称 收款人 全称 -->
         <tr>
-          <td class="column" rowspan="3" colspan="1">付款人</td>
+          <td class="column" :rowspan="check2 ? '3' : '2'" colspan="1">付款人</td>
           <td class="column" colspan="2">
             全&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称：
           </td>
           <td class="value" colspan="3">{{ detailsData.outAccountName }}</td>
-          <td class="column" rowspan="3" colspan="1">收款人</td>
+          <td class="column" :rowspan="check2 ? '3' : '2'" colspan="1">收款人</td>
           <td class="column" colspan="2">
             全&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称：
           </td>
           <td class="value" colspan="3">{{ detailsData.inAccountName }}</td>
         </tr>
         <!-- 账号 -->
-        <tr>
+        <tr v-if="check2">
           <td class="column" colspan="2">
             账&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号：
           </td>
@@ -120,7 +120,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, reactive, ref, toRefs } from "vue";
+import { defineComponent, onMounted, reactive, ref, toRefs, watch } from "vue";
 import { numFormat, numToTenThousand } from "@/utils/numFormat";
 import print from "vue3-print-nb";
 import { useStore } from 'vuex';
@@ -131,6 +131,10 @@ export default defineComponent({
     detailsData: {
       type: Object,
       default: {}
+    },
+    check2: {
+      type: Boolean,
+      default: false
     }
   },
   setup(props, { emit }) {
@@ -138,6 +142,10 @@ export default defineComponent({
     const data = reactive({
       user: store.state.user.user,
     });
+
+    watch(() => props.check2, (val: any) => {
+      console.log(val)
+    }, {immediate: true})
 
     const menoyToUppercase = (money: any) => {
       var cnNums = new Array(
@@ -274,7 +282,8 @@ export default defineComponent({
   background: #f1f1f1;
 }
 .value {
-  width: 70px;
+  min-width: 200px;
+  // width: 70px;
   height: 30px;
   border: 1px solid #333;
   color: #1890ff !important;

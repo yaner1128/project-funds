@@ -42,6 +42,8 @@
     <addView ref="addViewRef" @reload="doSimpleQuery" />
     <!-- 会计科目 -->
     <accountSub ref="accountSubRef" @reload="doSimpleQuery" />
+    <!-- 账目 -->
+    <account-view-vue ref="accountViewRef" @reload="doSimpleQuery" />
   </div>
 </template>
 
@@ -53,6 +55,7 @@ import { getAccountSets } from "@/api/dsAccountSets";
 import addView from "./module/addView.vue";
 import accountSub from './module/accountSub.vue';
 import { useRouter } from "vue-router";
+import accountViewVue from "./module/accountView.vue";
 
 export default defineComponent({
   name: "acSet",
@@ -61,7 +64,8 @@ export default defineComponent({
     Ticket,
     Document,
     addView,
-    accountSub
+    accountSub,
+    accountViewVue
   },
   setup() {
     const router = useRouter();
@@ -100,8 +104,10 @@ export default defineComponent({
       accountSubRef.value.open(accountSetCode);
     }
     // 跳转
-    const jumpClick = (accountSetName: any) => {
-      router.push({ path: '/accounting/index', query: { accountSetName: accountSetName } })
+    const accountViewRef = ref();
+    const jumpClick = (accountSetName: any, accountSetCode: any) => {
+      accountViewRef.value.open(accountSetName, accountSetCode)
+      // router.push({ path: '/accounting/index', query: { accountSetName: accountSetName } })
     }
 
     // 设置高度
@@ -132,7 +138,8 @@ export default defineComponent({
       doSimpleQuery,
       addClick,
       accountSubject,
-      jumpClick
+      jumpClick,
+      accountViewRef
     };
   },
 });

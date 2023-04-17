@@ -1,7 +1,6 @@
 import store from '@/store'
 
 function checkPermission(el: { parentNode: { removeChild: (arg0: any) => any } }, binding: { value: any }) {
-  debugger
   const { value } = binding
 
   const roles = store.getters && store.getters.roles

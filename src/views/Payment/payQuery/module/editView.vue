@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    top="3vh"
+    top="10vh"
     :close-on-click-modal="false"
     :append-to-body="true"
     v-model="dialogFormVisible"
@@ -102,7 +102,7 @@
                 placeholder="请输入专项资金相关用途"
               />
             </el-form-item>
-            <el-form-item class="checkItem">
+            <!-- <el-form-item class="checkItem">
               <el-checkbox
                 v-model="infoForm.check1"
                 label="打印不显示子账户分隔符"
@@ -116,7 +116,7 @@
             </el-form-item>
             <el-form-item class="checkItem">
               <el-checkbox v-model="infoForm.check3" label="打印不显示子账户" />
-            </el-form-item>
+            </el-form-item> -->
           </el-form>
         </div>
         <!-- 选择拨款账号 -->
@@ -360,7 +360,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .scrollbar {
-  height: calc(100vh - 240px);
+  height: calc(100vh - 360px);
 }
 .info {
   padding: 20px 20px 20px 0;

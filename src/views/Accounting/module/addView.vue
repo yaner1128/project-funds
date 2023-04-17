@@ -42,9 +42,7 @@
           <div class="title">贷方</div>
           <div class="pay_container">
             <el-scrollbar class="scrollbar">
-              <template v-for="key in creditData" :key="key">
-                <itemVue ref="itemVueRef2" :disabled="!accountSetCode || !allocationCode" :curData="key" :treeData="treeData2" @putData="getCreditData" />
-              </template>
+              <itemVue v-for="(key, index) in creditData" :index="index" :key="key" :isSelectLedger="isSelectLedger" ref="itemVueRef2" :disabled="!accountSetCode  || !allocationCode" :curData="key" :treeData="treeData2" @changeSelected="getIsSelected" @putData="getCreditData" />
               <span v-if="accountSetCode" class="insertIcon" @click="insertClick"
                 ><el-icon><CirclePlus /></el-icon
               ></span>
@@ -100,7 +98,7 @@ export default defineComponent({
       accountSetCode: "",
       accountSetName: "",
       allocationCode: "",
-      creditData: [{}],
+      creditData: <any>[{}],
       sendData: <any>{
         amount: '',
       },
@@ -108,6 +106,7 @@ export default defineComponent({
       treeData2: [],
       curCreditData: <any>{},
       debitData: <any>{},
+      isSelectLedger: <any>[],
     });
     // 打开弹窗
     const open = () => {
@@ -257,10 +256,16 @@ export default defineComponent({
     }
     // 贷
     const getCreditData = (val: any) => {
-      console.log(val)
       for(var k in val) {
         data.curCreditData[k] = val[k];
       }
+    }
+    // 获取勾选的会计科目
+    const getIsSelected = (val: any) => {
+      for(var k in val) {
+        data.isSelectLedger.splice(k, 1, val[k])
+      }
+      data.isSelectLedger = data.isSelectLedger.slice(0)
     }
 
     // 设置高度
@@ -298,7 +303,8 @@ export default defineComponent({
       getDebitData,
       selectPayClick,
       selectPayRef,
-      getPayItem
+      getPayItem,
+      getIsSelected
     };
   },
 });

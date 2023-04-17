@@ -1,5 +1,6 @@
 <template>
     <el-dialog
+      top="10vh"
       :close-on-click-modal="false"
       :append-to-body="true"
       v-model="dialogFormVisible"

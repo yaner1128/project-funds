@@ -44,15 +44,18 @@
         <div class="title">贷方</div>
         <div class="pay_container">
           <el-scrollbar class="scrollbar">
-            <template v-for="item in creditData" :key="item">
-              <itemVue
-                ref="itemVueRef2"
-                :curData="item"
-                :disabled="!accountSetCode || !allocationCode || disabled"
-                :treeData="treeData2"
-                @putData="getCreditData"
-              />
-            </template>
+            <itemVue
+              v-for="(item, index) in creditData"
+              :key="item"
+              :index="index"
+              ref="itemVueRef2"
+              :curData="item"
+              :disabled="!accountSetCode || !allocationCode || disabled"
+              :treeData="treeData2"
+              :isSelectLedger="isSelectLedger"
+              @putData="getCreditData"
+              @changeSelected="getIsSelected"
+            />
             <span v-if="accountSetCode && !disabled" class="insertIcon" @click="insertClick"
               ><el-icon><CirclePlus /></el-icon
             ></span>
@@ -108,6 +111,7 @@ export default defineComponent({
       sendData: <any>{
         amount: ''
       },
+      isSelectLedger: <any>[]
     });
 
     watch(() => props.detailData, (val: any) => {
@@ -121,11 +125,22 @@ export default defineComponent({
         data.creditData = tempData.filter((item: any) => {
           return item.accountDirection === '0'
         })
+        data.isSelectLedger = data.creditData.map((item: any) => {
+          return item.ledgerAccountCode;
+        })
         data.sendData = tempData.filter((item: any) => {
           return item.accountDirection === '1'
         })[0]
       }
     },{ immediate: true })
+
+     // 获取勾选的会计科目
+    const getIsSelected = (val: any) => {
+      for(var k in val) {
+        data.isSelectLedger.splice(k, 1, val[k])
+      }
+      data.isSelectLedger = data.isSelectLedger.slice(0)
+    }
 
     watch(() => data.accountSetCode, (val) => {
       if(val) {
@@ -274,7 +289,8 @@ export default defineComponent({
       checkValid,
       selectPayRef,
       selectPayClick,
-      getPayItem
+      getPayItem,
+      getIsSelected
     };
   },
 });

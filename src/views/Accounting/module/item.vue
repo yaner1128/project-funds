@@ -7,8 +7,9 @@
           :data="treeData"
           check-strictly
           :render-after-expand="false"
-          :props="{children: 'children',label: 'ledgerAccountName', value: 'ledgerAccountCode'}"
+          :props="{children: 'children',label: 'ledgerAccountName', value: 'ledgerAccountCode', disabled: checkIsSelect}"
           placeholder="请选择会计科目"
+          @change="changeLedger"
         />
       </el-form-item>
       <el-form-item prop="amount">
@@ -44,13 +45,23 @@ export default defineComponent({
     isPay: {
       type: Boolean,
       default: false
+    },
+    index: {
+      type: Number,
+      default: 0
+    },
+    isSelectLedger: {
+      type: Array,
+      default: []
     }
   },
+  emits: ['changeSelected', 'putData'],
   setup(props, { emit }) {
     const data = reactive({
+      filterData: <any>[],
       formInline: <any>{
         ledgerAccountCode: "",
-        amount: null,
+        amount: null
       },
       rules: {
         ledgerAccountCode: [{ required: true, message: "请选择会计科目", trigger: "change" }],
@@ -68,6 +79,17 @@ export default defineComponent({
         return false;
       })
     }
+    const changeLedger = (val: any) => {
+      debugger
+      emit('changeSelected', { [props.index] : val})
+    }
+
+    const checkIsSelect = (value: any, node: any) => {
+      if(data.filterData.includes(value.ledgerAccountCode)) {
+        return true
+      }
+      return false
+    }
 
     const clear = () => {
       addFormRef.value.resetFields();
@@ -77,12 +99,23 @@ export default defineComponent({
       data.formInline = val;
     }, {immediate: true})
 
+    watch(() => props.isSelectLedger, (val) => {
+      debugger
+      var temp = <any>[]
+      val.forEach((item: any) => {
+        temp.push(item)
+      })
+      data.filterData = temp;
+    }, { immediate: true})
+
     return {
       addFormRef,
       ...toRefs(data),
       ...toRefs(props),
       checkValid,
-      clear
+      clear,
+      checkIsSelect,
+      changeLedger
     };
   },
 });

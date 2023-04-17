@@ -38,7 +38,7 @@
           valign="center"
         >
           <!--  -->
-          <tr>
+          <tr v-if="listData.check2">
             <td class="column" colspan="3">对应归口股市：</td>
             <td class="value" colspan="3">
               {{ listData.mofDepName[0].codeName }}
@@ -47,21 +47,21 @@
           </tr>
           <!-- 付款人 全称 收款人 全称 -->
           <tr>
-            <td class="column" rowspan="3" colspan="1">付款人</td>
+            <td class="column" :rowspan="listData.check2 ? '3' : '2'" colspan="1">付款人</td>
             <td class="column" colspan="2">
               全&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称：
             </td>
             <td class="value" colspan="3">
               {{ listData.collectionAccountName }}
             </td>
-            <td class="column" rowspan="3" colspan="1">收款人</td>
+            <td class="column" :rowspan="listData.check2 ? '3' : '2'" colspan="1">收款人</td>
             <td class="column" colspan="2">
               全&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称：
             </td>
             <td class="value" colspan="3">{{ listData.accountName }}</td>
           </tr>
           <!-- 账号 -->
-          <tr>
+          <tr v-if="listData.check2">
             <td class="column" colspan="2">
               账&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号：
             </td>
@@ -340,7 +340,8 @@ export default defineComponent({
   background: #f1f1f1;
 }
 .value {
-  width: 70px;
+  // width: 70px;
+  min-width: 200px;
   height: 30px;
   border: 1px solid #333;
   color: #1890ff !important;

@@ -10,7 +10,12 @@
   >
     <el-scrollbar class="scrollbar">
       <div class="dialog_container" id="print-iframe">
-        <detailsVue ref="detailsVueRef" :detailsData="detailsData" />
+        <detailsVue ref="detailsVueRef" :detailsData="detailsData" :check2="infoForm.check2" />
+      </div>
+      <div class="checkBox">
+        <el-checkbox v-model="infoForm.check1" label="打印不显示子账户分隔符"/>
+        <el-checkbox v-model="infoForm.check2" label="打印归口股室及账号" />
+        <el-checkbox v-model="infoForm.check3" label="打印不显示子账户" />
       </div>
     </el-scrollbar>
     <template #footer>
@@ -33,14 +38,15 @@ import print from "vue3-print-nb";
 export default defineComponent({
   name: "printfView",
   components: {
-    detailsVue
+    detailsVue,
   },
   setup(props, { emit }) {
     const addFormRef = ref();
     const data = reactive({
       dialogFormVisible: false,
       allocationCode: null,
-      detailsData: <any>{}
+      detailsData: <any>{},
+      infoForm: {},
     });
     const vPrint = print;
     let prints = {
@@ -79,27 +85,33 @@ export default defineComponent({
     // 打开弹窗
     const open = (allocationCode: any) => {
       data.allocationCode = allocationCode;
-      dsAllocationDetail({allocationCode: allocationCode}).then((res: any) => {
-        if(res.code === 200) {
-          data.detailsData = res.data;
-          data.dialogFormVisible = true;
+      dsAllocationDetail({ allocationCode: allocationCode }).then(
+        (res: any) => {
+          if (res.code === 200) {
+            data.detailsData = res.data;
+            data.dialogFormVisible = true;
+          }
         }
-      })
+      );
     };
     return {
       ...toRefs(data),
       open,
-      prints
+      prints,
     };
   },
 });
 </script>
 
 <style lang="scss" scoped>
+.checkBox{
+  display: flex;
+  flex-direction: column;
+}
 .scrollbar {
   height: calc(100vh - 300px);
 }
-/deep/ .el-input-number input{
+/deep/ .el-input-number input {
   text-align: left;
 }
 </style>

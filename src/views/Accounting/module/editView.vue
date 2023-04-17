@@ -38,11 +38,10 @@ export default defineComponent({
       dialogFormVisible: false,
       certificateNumber: null,
       oldAllocationCode: <any>null,
-      detailData: <any>{},
+      detailData: <any>{}
     });
     // 打开弹窗
     const open = (certificateNumber: any) => {
-      debugger
       data.certificateNumber = certificateNumber;
       getDsLedgerDetail({ certificateNumber: certificateNumber }).then((res: any) => {
         if(Array.isArray(res.data) && res.data.length>0) {
@@ -60,7 +59,6 @@ export default defineComponent({
       await detailsVueRef.value.checkValid();
     }
     const getData = (val: any) => {
-      debugger
       const tempData = val.data;
       let params = <any>[];
       for(var key in tempData) {
