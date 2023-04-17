@@ -47,8 +47,21 @@
               placeholder="请选择父级科目"
             />
           </el-form-item>
+          <el-form-item label="会计科目编码：" prop="ledgerAccountCode">
+            <el-input v-model="addForm.ledgerAccountCode" placeholder="请输入会计科目编码" />
+          </el-form-item>
           <el-form-item label="会计科目名称：" prop="ledgerAccountName">
             <el-input v-model="addForm.ledgerAccountName" placeholder="请输入会计科目名称" />
+          </el-form-item>
+          <el-form-item label="级别：" prop="levelNo">
+            <el-select v-model="addForm.levelNo" placeholder="请选择会计科目级别">
+              <el-option :label="1" :value="1" />
+              <el-option :label="2" :value="2" />
+              <el-option :label="3" :value="3" />
+              <el-option :label="4" :value="4" />
+              <el-option :label="5" :value="5" />
+              <el-option :label="6" :value="6" />
+            </el-select>
           </el-form-item>
           <el-form-item label="借贷方向：" prop="accountDirection">
             <el-switch
@@ -90,6 +103,12 @@ export default defineComponent({
     Pagination,
   },
   setup(props, { emit }) {
+    const checkCode = (rule: any, value: any, callback: any) => {
+      if(value == '0') {
+        callback(new Error('会计科目编码不能为0'))
+      }
+      callback()
+    }
     const data = reactive({
       dialogFormVisible: false,
       accountSetCode: null,
@@ -99,13 +118,17 @@ export default defineComponent({
       maxHeight: 400,
       addForm: {
         parentCode: '0',
+        ledgerAccountCode: '',
         ledgerAccountName: '',
-        accountDirection: null
+        accountDirection: null,
+        levelNo: ''
       },
       rules: {
         parentCode: [{ required: true, message: "请选择父级科目", trigger: "change" }],
+        ledgerAccountCode: [{ required: true, message: "请输入会计科目编码", trigger: "blur" },{ validator: checkCode, trigger: 'blur' } ],
         ledgerAccountName: [{ required: true, message: "请输入会计科目名称", trigger: "blur" }],
-        accountDirection: [{ required: true, message: "请选择借贷方向", trigger: "change" }]
+        accountDirection: [{ required: true, message: "请选择借贷方向", trigger: "change" }],
+        levelNo: [{ required: true, message: "请选择科目级别", trigger: "change" }],
       }
     });
     const getData = () => {

@@ -19,8 +19,8 @@
           <el-tree-select v-model="addForm.bank" :data="optionData" :props="{children: 'children',label: 'codeName', value: 'code'}" :render-after-expand="false" placeholder="请选择开户银行" />
         </el-form-item>
         <el-form-item label="账号：" prop="accountCode">
-          <!-- <el-input v-model="addForm.accountCode" placeholder="请输入账号" /> -->
-          <el-input-number v-model="addForm.accountCode" :controls="false" placeholder="请输入账号"  />
+          <el-input v-model="addForm.accountCode" placeholder="请输入账号" />
+          <!-- <el-input-number v-model="addForm.accountCode" :controls="false" placeholder="请输入账号"  /> -->
         </el-form-item>
         <el-form-item label="账号名称：" prop="accountName">
           <el-input v-model="addForm.accountName" placeholder="请输入账号名称" />

@@ -226,7 +226,7 @@ export default defineComponent({
             inAccountCode: data.infoForm.collectionAccountCode,
             amount:data.infoForm.money, // 金额
             remark: data.infoForm.remark, // 摘要
-            usepurposeapplication: data.infoForm.purpose, //用途
+            userpurposerapplication: data.infoForm.purpose, //用途
           }
           dsAllocationRequesAdd(list).then((res: any) => {
             if (res.code == 200) {

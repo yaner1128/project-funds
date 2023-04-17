@@ -95,7 +95,7 @@ export default defineComponent({
             selectRow: null as any,
             total: 0,
             pageObj: <any>{
-                page: 0,
+                page: 1,
                 size: 10,
             },
         });
@@ -127,7 +127,7 @@ export default defineComponent({
         const doSimpleQuery = () => {
             data.loading = true;
             const params = {
-                currentPageIndex: data.pageObj.page+1,
+                currentPageIndex: data.pageObj.page,
                 pageSize: data.pageObj.size
             }
             getDsMofProjects(params, {prjName: data.query.prjName, mofDepCode: data.mofDepCode}).then((res) => {

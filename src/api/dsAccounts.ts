@@ -81,6 +81,15 @@ export function getAccountsPage(data: any) {
   })
 }
 
+// 获取详情
+export function getAccountsDetail(params: any) {
+  return request({
+    url: '/ds-cz-datacenter-special-funds/dsAccounts/detail',
+    method: 'get',
+    params
+  })
+}
+
 // 新增专户付款申请生成单号
 export function getMaxAllocationCode(params: any) {
   return request({

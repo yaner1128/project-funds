@@ -158,7 +158,8 @@ import { formatDate } from "@/utils/date";
 import {
   getMaxAllocationCode,
   dsAllocationDetail,
-  updateDsAllocationReques
+  updateDsAllocationReques,
+  getAccountsDetail
 } from "@/api/dsAccounts";
 import selectApproveVue from "../../payApplication/module/selectApprove.vue";
 import checkProjectView from "../../payApplication/module/checkProjectView.vue";
@@ -177,12 +178,23 @@ export default defineComponent({
     selectCollection,
   },
   setup(props, { emit }) {
+    const checkAmount = (rule: any, value: any, callback: any) => {
+      if (data.payAmountMax) {
+        if(data.payAmountMax < value) {
+          callback(new Error('当前申请金额不能大于拨款账户余额' + data.payAmountMax))
+        }
+        callback()
+      } else {
+        callback()
+      }
+    }
     const store = useStore();
     const infoRef = ref();
     const checkProjectViewRef = ref();
     const projectInput = ref();
     const selectCollectionRef = ref();
     const data = reactive({
+      payAmountMax: <any>null,
       isEdit: false,
       dialogFormVisible: false,
       allocationCode: null,
@@ -217,7 +229,7 @@ export default defineComponent({
         collection: [{ required: true, message: "必填", trigger: "blur" }],
         remark: [{ required: true, message: "必填", trigger: "blur" }],
         userpurposerapplication: [{ required: true, message: "必填", trigger: "blur" }],
-        amount: [{ required: true, message: "必填", trigger: "blur" }],
+        amount: [{ required: true, message: "必填", trigger: "blur" },{ validator: checkAmount, trigger: 'blur' }],
       },
       mofDepData: [],
       accountData: [],
@@ -259,6 +271,9 @@ export default defineComponent({
         data.infoForm.outAccount = res.data.outBankName+'-'+res.data.outAccountName+'-'+res.data.outAccountCode;
         data.infoForm.inAccount = res.data.inBankName+'-'+res.data.inAccountName+'-'+res.data.inAccountCode;
         data.dialogFormVisible = true;
+        getAccountsDetail({ accountCode: res.data.outAccountCode }).then((details: any) => {
+          data.payAmountMax = Number(details.data.amounts || 0);
+        })
       })
     };
     // 关闭
@@ -306,6 +321,7 @@ export default defineComponent({
     // 获取拨款账号
     const getSelected = (val: any) => {
       console.log("当前勾选的账号", val);
+      data.payAmountMax = val.amounts;
       data.infoForm.outAccountName = val.accountName;
       data.infoForm.outAccountCode = val.accountCode;
       data.infoForm.outAccount = val.bankName + " - " + val.accountName + " - " + val.accountCode;

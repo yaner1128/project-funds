@@ -158,7 +158,7 @@ export default defineComponent({
         });
         const doSimpleQuery = () => {
             const params = {
-                currentPageIndex: data.pageObj.page+1,
+                currentPageIndex: data.pageObj.page,
                 pageSize: data.pageObj.size
             }
             getDsMofProjects(params, data.query).then((res) => {
