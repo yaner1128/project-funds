@@ -136,7 +136,7 @@ export default defineComponent({
       router.push('/Payment/payApplication');
     }
     // 详情
-    const detailView = (row) => {
+    const detailView = (row:any) => {
       editViewRef.value.open(row.allocationCode, false);
     }
     // 审核

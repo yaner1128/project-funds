@@ -74,7 +74,7 @@
           />
         </el-form-item>
         <el-form-item label="金额：" prop="money">
-          <el-input-number v-model="infoForm.money" :controls="false" placeholder="请输入金额" />
+          <el-input-number v-model="infoForm.money" :precision="2" :controls="false" placeholder="请输入金额" />
         </el-form-item>
         <el-form-item label="摘要：" prop="remark">
           <el-input

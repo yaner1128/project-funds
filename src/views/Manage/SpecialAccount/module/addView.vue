@@ -25,7 +25,7 @@
           <el-input v-model="addForm.accountName" placeholder="请输入账号名称" />
         </el-form-item>
         <el-form-item label="余额：" prop="amounts">
-          <el-input-number v-model="addForm.amounts" :controls="false" placeholder="请输入余额"  />
+          <el-input-number v-model="addForm.amounts" :precision="2" :controls="false" placeholder="请输入余额"  />
         </el-form-item>
         <el-form-item label="账号状态：" prop="status">
           <el-select v-model="addForm.status"  placeholder="请选择账号状态">
@@ -158,7 +158,11 @@ export default defineComponent({
 .el-select, .el-input{
   width: 430px;
 }
-/deep/ .el-input-number input{
-  text-align: left;
+/deep/ .el-input-number {
+  width: 430px;
+  input{
+    text-align: left;
+    width: 100%;
+  }
 }
 </style>

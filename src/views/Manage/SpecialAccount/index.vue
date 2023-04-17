@@ -52,9 +52,9 @@
           <el-button v-permission="['CASHIER']" style="margin-left: 8px" link type="primary" @click="editStatus(row.accountCode, row.status)">
             <el-icon class="el-icon--left"><EditPen /></el-icon>修改状态
           </el-button>
-          <el-button v-permission="['CASHIER']" style="margin-left: 8px" link type="primary" @click="reportClick(row.accountCode)">
+          <!-- <el-button v-permission="['CASHIER']" style="margin-left: 8px" link type="primary" @click="reportClick(row.accountCode)">
             <el-icon class="el-icon--left"><Document /></el-icon>查看报表
-          </el-button>
+          </el-button> -->
         </template>
       </el-table-column>
     </el-table>

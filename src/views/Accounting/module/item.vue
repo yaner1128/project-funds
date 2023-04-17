@@ -16,6 +16,7 @@
         <el-input-number
           v-model="formInline.amount"
           :controls="false"
+          :precision="2"
           placeholder="请输入金额"
           :disabled="isPay"
         />
@@ -80,7 +81,6 @@ export default defineComponent({
       })
     }
     const changeLedger = (val: any) => {
-      debugger
       emit('changeSelected', { [props.index] : val})
     }
 
@@ -100,7 +100,6 @@ export default defineComponent({
     }, {immediate: true})
 
     watch(() => props.isSelectLedger, (val) => {
-      debugger
       var temp = <any>[]
       val.forEach((item: any) => {
         temp.push(item)

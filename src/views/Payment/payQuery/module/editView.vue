@@ -86,7 +86,8 @@
               />
             </el-form-item>
             <el-form-item label="金额：" prop="amount">
-              <el-input v-model="infoForm.amount" placeholder="请输入金额" />
+              <!-- <el-input v-model="infoForm.amount" placeholder="请输入金额" /> -->
+              <el-input-number v-model="infoForm.amount" :precision="2" :controls="false" placeholder="请输入金额" />
             </el-form-item>
             <el-form-item label="摘要：" prop="remark">
               <el-input
@@ -270,7 +271,7 @@ export default defineComponent({
     const submitClick = async () => {
       await infoRef.value.validate((valid: any, fields: any) => {
         if (valid) {
-          updateDsAllocationReques(data.infoForm).then(res => {
+          updateDsAllocationReques(data.infoForm).then((res: any) => {
             if(res.code === 200) {
               ElMessage.success('修改成功')
               resetForm();
@@ -284,7 +285,7 @@ export default defineComponent({
     };
     // 生成单号
     const generateCardId = (val: any) => {
-      const curMofDepData = data.mofDepData.filter((item: any) => {
+      const curMofDepData = <any>data.mofDepData.filter((item: any) => {
         return item.code == val;
       });
       data.infoForm.allocationMofName = curMofDepData[0].codeName;
@@ -380,6 +381,13 @@ export default defineComponent({
 /deep/ .btn {
   .el-form-item__content {
     justify-content: center;
+  }
+}
+/deep/ .el-input-number {
+  width: 100%;
+  input{
+    text-align: left;
+    width: 100%;
   }
 }
 </style>

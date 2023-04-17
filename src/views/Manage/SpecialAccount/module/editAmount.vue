@@ -11,7 +11,7 @@
     <div class="dialog_container">
       <el-form ref="addFormRef" :model="addForm" label-width="100px" :rules="rules">
         <el-form-item label="余额：" prop="modifyAmount">
-          <el-input-number v-model="addForm.modifyAmount" :controls="false" placeholder="请输入修正余额" />
+          <el-input-number v-model="addForm.modifyAmount" :precision="2" :controls="false" placeholder="请输入修正余额" />
         </el-form-item>
         <el-form-item label="修改原因：" prop="remark">
           <el-input v-model="addForm.remark" placeholder="请输入修正原因" :autosize="{ minRows: 5 }" type="textarea" />
@@ -100,7 +100,11 @@ export default defineComponent({
 .scrollbar {
   height: calc(100vh - 173px);
 }
-/deep/ .el-input-number input{
-  text-align: left;
+/deep/ .el-input-number {
+  width: 100%;
+  input{
+    text-align: left;
+    width: 100%;
+  }
 }
 </style>

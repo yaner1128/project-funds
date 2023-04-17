@@ -83,10 +83,12 @@
                     <el-input v-model="form.prjCode" placeholder="请输入项目编号" />
                 </el-form-item>
                 <el-form-item label="年度计划付款额度:" prop="yearamount">
-                    <el-input v-model="form.yearamount" placeholder="请输入年度计划付款额度" />
+                  <el-input-number v-model="form.yearamount" :precision="2" :controls="false" placeholder="请输入年度计划付款额度" />
+                    <!-- <el-input v-model="form.yearamount" placeholder="请输入年度计划付款额度" /> -->
                 </el-form-item>
                 <el-form-item label="累计拔款额度:" prop="currentamount">
-                <el-input v-model="form.currentamount" placeholder="请输入累计拔款额度" />
+                  <el-input-number v-model="form.currentamount" :precision="2" :controls="false" placeholder="请输入累计拔款额度" />
+                <!-- <el-input v-model="form.currentamount" placeholder="请输入累计拔款额度" /> -->
                 </el-form-item>
                 <el-form-item label="备注:" prop="remark">
                     <el-input type="textarea" v-model="form.remark"  placeholder="请输入备注" />
@@ -250,6 +252,13 @@ width: 200px;
 .el-input__wrapper {
     width: 200px;
 }
+}
+/deep/ .el-input-number {
+  width: 100%;
+  input{
+    text-align: left;
+    width: 100%;
+  }
 }
 </style>
   

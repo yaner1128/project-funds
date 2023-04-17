@@ -258,7 +258,6 @@ export default defineComponent({
     }
     // 判断借贷是否相等
     const checkIsEqual = () => {
-      debugger
       // 获取借方金额
       let borrow_value = 0;
       for(var k in data.debitData) {

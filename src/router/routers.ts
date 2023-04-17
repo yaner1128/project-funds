@@ -150,6 +150,6 @@ export const constantRouterMap = [
 ]
 
 export default createRouter({
-  history: createWebHistory(process.env.NODE_ENV === 'production' ? '/project/' : '/'),
+  history: createWebHistory(process.env.NODE_ENV === 'production' ? '/funds/' : '/'),
   routes: constantRouterMap
 })
