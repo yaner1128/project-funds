@@ -3,7 +3,6 @@
     <el-menu
       :show-timeout="200"
       :default-active="$route.path"
-      :collapse="isCollapse"
       :unique-opened="true"
       mode="vertical"
       active-text-color="#333"

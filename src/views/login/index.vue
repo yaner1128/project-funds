@@ -1,7 +1,7 @@
 <template>
   <div class="loginBox">
     <div class="login">
-      <h1 class="system_title">洪江市财政局项目库管理系统</h1>
+      <h1 class="system_title">专项资金管理系统</h1>
       <div class="content_box">
         <el-form
           ref="formRef"
