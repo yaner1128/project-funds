@@ -57,9 +57,9 @@ router.beforeEach((to: any, from: any, next: any) => {
       // 测试环境
       // window.location.href = 'http://192.168.1.7:3265/';
       // 正式环境
-      window.location.href = window.location.origin
-      // next(`/login`) // 否则全部重定向到登录页
-      next()
+      // window.location.href = window.location.origin
+      next(`/login`) // 否则全部重定向到登录页
+      // next()
       NProgress.done()
     }
   }
@@ -114,7 +114,7 @@ function CAS_AutoLogin(to: { query: { to: any; token: any; code: any } }, from: 
     return
   }
   setToken(token, false)
-  router.replace({ path: toPath, query: {}})
+  router.replace({ path: toPath, query: {} })
 }
 
 function TOKEN_AutoLogin(to: { query: { to: any; token: any } }, from: any, next: any) {
@@ -125,7 +125,7 @@ function TOKEN_AutoLogin(to: { query: { to: any; token: any } }, from: any, next
     return
   }
   setToken(token, false)
-  router.replace({ path: toPath, query: {}})
+  router.replace({ path: toPath, query: {} })
 }
 
 function JWT_AutoLogin(to: { query: { to: any; code: any } }, from: any, next: any) {
@@ -135,9 +135,9 @@ function JWT_AutoLogin(to: { query: { to: any; code: any } }, from: any, next: a
     console.error('没有登陆CODE')
     return
   }
-  getAToken(code, function(data: { data: { token: any } }) {
+  getAToken(code, function (data: { data: { token: any } }) {
     setToken(data.data.token, false)
-    router.replace({ path: toPath, query: {}})
+    router.replace({ path: toPath, query: {} })
   })
 }
 
@@ -148,7 +148,7 @@ function getAToken(enConetnt: string, callback: { (data: any): void; (arg0: any)
   xhr.open('post', login)
   xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
   xhr.send('code=' + enConetnt)
-  xhr.onreadystatechange = function() {
+  xhr.onreadystatechange = function () {
     if (xhr.readyState === 4 && xhr.status === 200) {
       var json = JSON.parse(xhr.responseText)
       callback && callback(json)

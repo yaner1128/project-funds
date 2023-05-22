@@ -9,7 +9,7 @@ const AutoDllPlugin = require('autodll-webpack-plugin')
 const port = process.env.VUE_PORT || process.env.npm_config_port || 80 // 端口
 const appBasePort = process.env.VUE_APP_BASE_PORT || 8080 // 后端端口
 
-function resolve (dir) {
+function resolve(dir) {
   return path.join(__dirname, dir)
 }
 module.exports = {
@@ -89,7 +89,7 @@ module.exports = {
       )
     }
   },
-  chainWebpack (config) {
+  chainWebpack(config) {
     // set svg-sprite-loader
     config.module
       .rule('svg')
