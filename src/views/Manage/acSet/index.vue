@@ -33,6 +33,9 @@
           <el-button link type="primary" class="tableBtn" @click="accountSubject(row.accountSetCode)">
             <el-icon class="el-icon--left"><Document /></el-icon>会计科目
           </el-button>
+          <el-button link type="primary" class="tableBtn" @click="carryForward(row)">
+            <el-icon class="el-icon--left"><Document /></el-icon>结转
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -44,6 +47,8 @@
     <accountSub ref="accountSubRef" @reload="doSimpleQuery" />
     <!-- 账目 -->
     <account-view-vue ref="accountViewRef" @reload="doSimpleQuery" />
+    <!-- 结转 -->
+    <entry-manage ref="entryManageRef"></entry-manage>
   </div>
 </template>
 
@@ -56,6 +61,7 @@ import addView from "./module/addView.vue";
 import accountSub from './module/accountSub.vue';
 import { useRouter } from "vue-router";
 import accountViewVue from "./module/accountView.vue";
+import EntryManage from "./module/EntryManage/index.vue"
 
 export default defineComponent({
   name: "acSet",
@@ -65,7 +71,8 @@ export default defineComponent({
     Document,
     addView,
     accountSub,
-    accountViewVue
+    accountViewVue,
+    EntryManage
   },
   setup() {
     const router = useRouter();
@@ -103,6 +110,12 @@ export default defineComponent({
     const accountSubject = (accountSetCode: any) => {
       accountSubRef.value.open(accountSetCode);
     }
+    // 结转
+    const entryManageRef = ref();
+    const carryForward = (row: any) => {
+      console.log("结转", row)
+      entryManageRef.value.open(row.accountSetCode);
+    }
     // 跳转
     const accountViewRef = ref();
     const jumpClick = (accountSetName: any, accountSetCode: any) => {
@@ -139,7 +152,9 @@ export default defineComponent({
       addClick,
       accountSubject,
       jumpClick,
-      accountViewRef
+      accountViewRef,
+      carryForward,
+      entryManageRef
     };
   },
 });
