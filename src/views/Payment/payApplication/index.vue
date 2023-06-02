@@ -105,6 +105,8 @@
         <el-form-item class="btn">
           <el-button type="primary" @click="submit">提交</el-button>
           <el-button :disabled="!mofDepCode" @click="printfClick">打印</el-button>
+          <el-button @click="printfApplyClick">打印支付申请</el-button>
+          <el-button @click="printfInvoiceClick">打印凭证</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -116,6 +118,10 @@
     <checkProjectView ref="checkProjectViewRef" @reload="projectData"></checkProjectView>
     <!-- 选择付款账号 -->
     <selectCollection ref="selectCollectionRef" @selected="getCollection" />
+    <!-- d打印 -->
+    <printApply ref="printApplyRef" />
+     <!-- d打印 -->
+    <printfInvoice ref="printfInvoiceRef" />
   </div>
 </template>
 
@@ -138,6 +144,8 @@ import { ElMessage } from "element-plus";
 import { useStore } from 'vuex';
 import { getProjectEleUnionTree } from "@/api/codeManage";
 import { useRouter } from "vue-router";
+import printApply from "./module/printfApply.vue";
+import printfInvoice from "./module/printfInvoice.vue"
 
 export default defineComponent({
   name: "payApplication",
@@ -145,7 +153,9 @@ export default defineComponent({
     printView,
     selectApproveVue,
     checkProjectView,
-    selectCollection
+    selectCollection,
+    printApply,
+    printfInvoice
   },
   setup() {
     const checkAmount = (rule: any, value: any, callback: any) => {
@@ -295,6 +305,26 @@ export default defineComponent({
       })
     }
 
+    // 打印支付申请
+    const printApplyRef = ref();
+    const printfApplyClick = async () => {
+      // await infoRef.value.validate((valid: any, fields: any) => {
+      //   if (valid) {
+          printApplyRef.value.open(data.infoForm, data.user, data.dateTime, data.mofDepCode);
+      //   }
+      // })
+    }
+
+    // 打印发票
+    const printfInvoiceRef = ref();
+    const printfInvoiceClick = async () => {
+      // await infoRef.value.validate((valid: any, fields: any) => {
+      //   if (valid) {
+        printfInvoiceRef.value.open(data.infoForm, data.user, data.dateTime, data.mofDepCode);
+      //   }
+      // })
+    }
+
     // 获取下拉数据
     const getCodeData = () => {
       // 股室
@@ -323,7 +353,11 @@ export default defineComponent({
       projectInput,
       selectCollectionRef,
       getCollection,
-      store
+      store,
+      printApplyRef,
+      printfApplyClick,
+      printfInvoiceRef,
+      printfInvoiceClick
     };
   },
 });
