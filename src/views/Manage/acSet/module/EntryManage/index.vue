@@ -65,7 +65,7 @@
     <!-- 方式二 -->
     <type2 ref="type2Ref" :accountSetCode="accountSetCode"></type2>
     <!-- 方式三 -->
-    <type3 ref="type3Ref" :accountSetCode="accountSetCode"></type3>
+    <type3 ref="type3Ref" :accountSetCode="accountSetCode" @quit="quitEvent"></type3>
 
     <template #footer>
       <span class="dialog-footer">

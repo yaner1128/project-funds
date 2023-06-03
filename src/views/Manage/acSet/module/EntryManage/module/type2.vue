@@ -54,7 +54,7 @@
       </vxe-column>
       <vxe-column field="code" title="金额来源公式" :edit-render="{}">
         <template #edit="{ row }">
-          <vxe-input v-model="row.code" type="text" readonly></vxe-input>
+          <vxe-input v-model="row.code" type="text" readonly @focus="selectRemark(row, 'code', sourceAmountRef)"></vxe-input>
         </template>
       </vxe-column>
       <vxe-column field="code" title="数量来源公式" :edit-render="{}">
@@ -65,6 +65,7 @@
     </vxe-table>
     <remarkVue ref="remarkRef" @putData="getRemarkData"></remarkVue>
     <LedgerAccountVue ref="LedgerAccountRef"></LedgerAccountVue>
+    <sourceAmount ref="sourceAmountRef"></sourceAmount>
     <template #footer>
       <span class="dialog-footer">
         <el-button type="primary">存入</el-button>
@@ -78,16 +79,19 @@
 import { defineComponent, onMounted, reactive, ref, toRefs } from "vue";
 import LedgerAccountVue from "./LedgerAccount.vue";
 import remarkVue from "./remark.vue";
+import sourceAmount from "./sourceAmount.vue";
 
 export default defineComponent({
   name: 'type2',
   components: {
     remarkVue,
-    LedgerAccountVue
+    LedgerAccountVue,
+    sourceAmount
   },
   setup(){
     const remarkRef = ref();
     const LedgerAccountRef = ref();
+    const sourceAmountRef = ref();
     const data = reactive({
       dialogVisible: false,
       open: () => {
@@ -112,7 +116,8 @@ export default defineComponent({
     return {
       ...toRefs(data),
       remarkRef,
-      LedgerAccountRef
+      LedgerAccountRef,
+      sourceAmountRef
     }
   }
 })
