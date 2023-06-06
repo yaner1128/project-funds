@@ -68,5 +68,5 @@ let demo = {
 }
 
 export default {
-  "get|/project/data": demo
+  // "get|/project/data": demo
 };
