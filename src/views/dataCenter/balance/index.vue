@@ -190,7 +190,7 @@ export default defineComponent({
     }
 
     const selectAccount = () => {
-      selectAccountRef.value.open()
+      selectAccountRef.value.open(null)
     }
 
     const changeYear = (item:any) => {

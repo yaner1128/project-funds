@@ -58,7 +58,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const data = reactive({
       dialogFormVisible: false,
-      query: {
+      query: <any>{
         year: '',
         accountSetName: ''
       },
@@ -73,7 +73,10 @@ export default defineComponent({
     });
 
     // 打开弹窗
-    const open = () => {
+    const open = (row:any) => {
+      if(row != null ){
+        data.query.hasInit = 0;
+      }
       getData();
       data.dialogFormVisible = true;
       autoHeight();
@@ -96,7 +99,6 @@ export default defineComponent({
       const params = Object.assign({
         currentPageIndex: data.pageObj.page,
         pageSize: data.pageObj.size,
-        hasInit:0
       }, data.query)
       getAccountSets(params).then((res: any) => {
         data.tableData = res.data.records;

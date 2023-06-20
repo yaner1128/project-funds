@@ -17,16 +17,13 @@
           @change="changeYear"
         />
       </el-form-item>
-      <el-form-item label="起止月份：" prop="time">
+      <el-form-item label="日期：" prop="time">
         <el-date-picker
           v-model="form.time"
-          type="monthrange"
-          value-format="YYYY-MM"
+          type="date"
+          value-format="YYYY-MM-DD"
           :default-value="defaultDate"
           :disabled-date="disabledDateFun"
-          range-separator="To"
-          start-placeholder="开始月份"
-          end-placeholder="结束月份"
         />
       </el-form-item>
       <el-form-item label="账套：" prop="accountSetName">
@@ -34,18 +31,6 @@
           v-model="form.accountSetName"
           placeholder="请选择账套"
           @click="selectAccount"
-        />
-      </el-form-item>
-      <el-form-item label="新账套号：" prop="newAccountSetCode">
-        <el-input
-          v-model="form.newAccountSetCode"
-          placeholder="请输入新账套号"
-        />
-      </el-form-item>
-      <el-form-item label="新账套名称：" prop="newAccountSetName">
-        <el-input
-          v-model="form.newAccountSetName"
-          placeholder="请输入新账套名称"
         />
       </el-form-item>
     </el-form>
@@ -116,8 +101,9 @@ export default defineComponent({
         if (valid) {
             data.dataList.accountSetCode = data.form.accountSetCode;
             data.dataList.fiscalYear = data.form.year;
-            data.dataList.startMonth = data.form.time[0].split('-')[1];
-            data.dataList.endMonth = data.form.time[1].split('-')[1];
+            // data.dataList.startMonth = data.form.time[0].split('-')[1];
+            // data.dataList.endMonth = data.form.time[1].split('-')[1];
+            data.dataList.carryDate = data.form.time
             console.log(data.form)
             uploadBalance.value.submit();
           }
@@ -136,13 +122,11 @@ export default defineComponent({
         uploadBalance.value.clearFiles()
         ElMessage({ type: 'warning', message: '导入失败!' })
       },
-      form: {
+      form: <any>{
         year: formatDate(new Date(), 'yyyy'),
         time:'',
         accountSetCode: "",
         accountSetName: "",
-        newAccountSetCode: "",
-        newAccountSetName: ""
       },
       rules: {
         year: [{ required: true, message: "请选择年度", trigger: "blur" }],
@@ -155,7 +139,7 @@ export default defineComponent({
         const year = date.getFullYear().toString()
         return year !== data.form.year
       },
-      defaultDate: [new Date(formatDate(new Date(), 'yyyy')), new Date(formatDate(new Date(), 'yyyy'))]
+      defaultDate: [new Date(formatDate(new Date(), 'yyyy-MM-dd'))]
     })
     const getSelected = (val:any) => {
       console.log(val);
@@ -164,12 +148,12 @@ export default defineComponent({
     }
 
     const selectAccount = () => {
-      selectAccountRef.value.open()
+      selectAccountRef.value.open('0')
     }
 
     const changeYear = (item:any) => {
       console.log(item)
-      data.defaultDate = [new Date(item), new Date(item)]
+      data.defaultDate = [new Date(item)]
       data.form.time = ""
     }
     const open = () => {
@@ -178,6 +162,7 @@ export default defineComponent({
     const close = () => {
       data.dialog = false;
       data.loading = false;
+      data.form = {year: formatDate(new Date(), 'yyyy')};
       uploadBalance.value.clearFiles();
     }
     const loadShowById = () => {
