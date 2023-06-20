@@ -95,7 +95,8 @@ export default defineComponent({
     const getData = () => {
       const params = Object.assign({
         currentPageIndex: data.pageObj.page,
-        pageSize: data.pageObj.size
+        pageSize: data.pageObj.size,
+        hasInit:0
       }, data.query)
       getAccountSets(params).then((res: any) => {
         data.tableData = res.data.records;

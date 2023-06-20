@@ -36,6 +36,18 @@
           @click="selectAccount"
         />
       </el-form-item>
+      <el-form-item label="新账套号：" prop="newAccountSetCode">
+        <el-input
+          v-model="form.newAccountSetCode"
+          placeholder="请输入新账套号"
+        />
+      </el-form-item>
+      <el-form-item label="新账套名称：" prop="newAccountSetName">
+        <el-input
+          v-model="form.newAccountSetName"
+          placeholder="请输入新账套名称"
+        />
+      </el-form-item>
     </el-form>
     <el-upload
       class="upload"
@@ -129,6 +141,8 @@ export default defineComponent({
         time:'',
         accountSetCode: "",
         accountSetName: "",
+        newAccountSetCode: "",
+        newAccountSetName: ""
       },
       rules: {
         year: [{ required: true, message: "请选择年度", trigger: "blur" }],
