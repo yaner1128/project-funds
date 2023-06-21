@@ -10,6 +10,7 @@
     :before-close="resetForm"
   >
     <el-button v-permission="['ACCOUNTANT']" @click="addAccount" type="primary">新增</el-button>
+    <el-button v-permission="['ACCOUNTANT']" @click="addImport" type="primary">批量导入</el-button>
     <vxe-table
       border
       ref="xTree"
@@ -82,7 +83,8 @@
         </div>
       </template>
     </el-dialog>
-
+    <!--批量导入 -->
+    <balance-import-vue ref="balanceImport" @close="getData()"></balance-import-vue>
     <template #footer>
       <div style="text-align: right">
         <el-button @click="resetForm" type="primary">关闭</el-button>
@@ -96,11 +98,13 @@ import { defineComponent, onMounted, reactive, ref, toRefs,nextTick } from "vue"
 import Pagination from "@/components/Pagination/index.vue";
 import { simpleAccountingSubject, addLedgerAccounts } from "@/api/dsAccountSets";
 import { ElMessage } from "element-plus";
+import balanceImportVue from "./balanceImport.vue";
 
 export default defineComponent({
   name: "accountSub",
   components: {
     Pagination,
+    balanceImportVue
   },
   setup(props, { emit }) {
     const checkCode = (rule: any, value: any, callback: any) => {
@@ -131,6 +135,10 @@ export default defineComponent({
         levelNo: [{ required: true, message: "请选择科目级别", trigger: "change" }],
       }
     });
+    const balanceImport = ref();
+    const addImport = () => {
+      balanceImport.value.open(data.accountSetCode);
+    };
     const getData = () => {
       simpleAccountingSubject({ accountSetCode: data.accountSetCode }).then((res: any) => {
         data.tableData = res.data;
@@ -197,7 +205,7 @@ export default defineComponent({
         setHeight();
       });
     };
-
+    
     onMounted(() => {
       autoHeight();
     })
@@ -209,7 +217,10 @@ export default defineComponent({
       resetForm,
       addAccount,
       resetAddForm,
-      submitAdd
+      submitAdd,
+      addImport,
+      balanceImport,
+      getData
     };
   },
 });
