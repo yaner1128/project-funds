@@ -33,9 +33,9 @@
           <el-button link type="primary" class="tableBtn" @click="accountSubject(row.accountSetCode)">
             <el-icon class="el-icon--left"><Document /></el-icon>会计科目
           </el-button>
-          <el-button link type="primary" class="tableBtn" @click="carryForward(row)">
+          <!-- <el-button link type="primary" class="tableBtn" @click="carryForward(row)">
             <el-icon class="el-icon--left"><Document /></el-icon>结转
-          </el-button>
+          </el-button> -->
         </template>
       </el-table-column>
     </el-table>

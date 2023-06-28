@@ -4,24 +4,27 @@
     append-to-body
     title="科目选择"
     width="400"
+    :close-on-click-modal="false"
     @close="handleClose"
   >
-    <h3>科目树</h3>
-    <el-tree
-      ref="treeRef"
-      default-expand-all
-      :data="treeData"
-      :props="defaultProps"
-      node-key="value"
-      @node-click="handleNodeClick"
-      :expand-on-click-node="false"
-      :highlight-current="true"
-      :current-node-key="selectedNodeId"
-    />
+    <!-- <h3>科目树</h3> -->
+    <el-scrollbar style="height: 500px">
+      <el-tree
+        ref="treeRef"
+        default-expand-all
+        :data="treeData"
+        :props="defaultProps"
+        node-key="value"
+        @node-click="handleNodeClick"
+        :expand-on-click-node="false"
+        :highlight-current="true"
+        :current-node-key="selectedNodeId"
+      />
+    </el-scrollbar>
     <template #footer>
       <span class="dialog-footer">
         <el-button type="primary" @click="handleSubmit">确认</el-button>
-        <el-button type="primary" @click="handleClose">退 出</el-button>
+        <el-button type="" @click="handleClose">退 出</el-button>
       </span>
     </template>
   </el-dialog>
@@ -30,91 +33,72 @@
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref, toRefs } from "vue";
 import { ElMessage } from "element-plus";
+import { simpleAccountingSubject } from "@/api/dsAccountSets";
 
 export default defineComponent({
   name: "LedgerAccount",
+  props: {
+    accountSetCode: {
+      type: String,
+    },
+  },
   setup(props, { emit }) {
     const treeRef = ref();
     const data = reactive({
       dialogVisible: false,
       selectedNodeId: ref(null),
       selected: <any>{},
-      treeData: [
-        {
-          label: "银行存款",
-          value: "102",
-          children: [
-            {
-              label: "工行（0096）",
-              value: "10201",
-              children: [
-                {
-                  label: "测试",
-                  value: "1020101",
-                },
-              ],
-            },
-          ],
-        },
-        {
-          label: "债券投资",
-          value: "103"
-        },
-        {
-          label: "暂付款",
-          value: "105"
-        },
-        {
-          label: "暂存款",
-          value: "201"
-        },
-      ],
+      treeData: [],
       defaultProps: {
         children: "children",
         label: function (a: any) {
-          return a.value + "\xa0" + a.label;
+          return a.ledgerAccountCode + "\xa0" + a.ledgerAccountName;
         },
       },
       open: () => {
         data.dialogVisible = true;
+        // 会计科目
+        simpleAccountingSubject({ accountSetCode: props.accountSetCode }).then((res: any) => {
+          data.treeData = res.data;
+        });
       },
       handleNodeClick: (value: any) => {
-        if (value.value === data.selectedNodeId) {
+        if (value.ledgerAccountId === data.selectedNodeId) {
           // 如果当前节点已经选中，则取消选中
           data.selectedNodeId = null;
         } else {
           // 否则选中当前节点
           data.selected = value;
-          data.selectedNodeId = value.value;
+          data.selectedNodeId = value.ledgerAccountId;
         }
-      }
+      },
     });
     // 关闭
     const handleClose = () => {
       data.dialogVisible = false;
       data.selected = {
         value: null
-      }
+      };
       data.selectedNodeId = null;
-      treeRef.value!.setCheckedKeys([], false)
+      treeRef.value!.setCheckedKeys([], false);
     };
     // 提交
     const handleSubmit = () => {
-      if(!data.selectedNodeId) {
-        ElMessage.warning('请选择一个科目');
+      if (!data.selectedNodeId) {
+        ElMessage.warning("请选择一个科目");
         return;
       }
-      emit('putData', data.selected)
+      emit("putData", data.selected);
       data.dialogVisible = false;
       data.selectedNodeId = null;
-      treeRef.value!.setCheckedKeys([], false)
-    }
+      treeRef.value!.setCheckedKeys([], false);
+    };
 
     return {
       ...toRefs(data),
       handleClose,
       treeRef,
-      handleSubmit
+      handleSubmit,
     };
   },
 });
